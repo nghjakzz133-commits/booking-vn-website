@@ -349,27 +349,20 @@ Thời gian: ${new Date().toLocaleString('vi-VN')}
         alert('Đã đăng xuất!');
     }
 
-            let selectedVenue = null;
+                    let selectedVenue = null;
 
         function bookVenue(venueId) {
-            if (!currentUser) {
-                alert('Vui lòng đăng nhập để đặt chỗ!');
-                openModal('loginModal');
-                return;
-            }
-            
             selectedVenue = venues.find(v => v.id === venueId);
             document.getElementById('bookingTitle').textContent = `Đặt chỗ tại ${selectedVenue.name}`;
             
-            // Auto-fill user info
-            if (currentUser) {
-                document.getElementById('bookingName').value = currentUser.name || '';
-                document.getElementById('bookingEmail').value = currentUser.email || '';
-                document.getElementById('bookingPhone').value = currentUser.phone || '';
-            }
+            // Xóa auto-fill (vì không có đăng nhập)
+            document.getElementById('bookingName').value = '';
+            document.getElementById('bookingEmail').value = '';
+            document.getElementById('bookingPhone').value = '';
             
             openModal('bookingModal');
         }
+
 
         function submitBooking(e) {
             e.preventDefault();
