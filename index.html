@@ -73,8 +73,35 @@
 </div>
 
 <!-- Modal Đăng ký -->
-    <!-- Modal Đặt chỗ -->
-    <div id="bookingModal" class="modal">
+<div id="registerModal" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="closeModal('registerModal')">&times;</span>
+        <h2>Đăng ký tài khoản</h2>
+        <form onsubmit="register(event)">
+            <div class="form-group">
+                <label>Họ tên</label>
+                <input type="text" id="registerName" required>
+            </div>
+            <div class="form-group">
+                <label>Email</label>
+                <input type="email" id="registerEmail" required>
+            </div>
+            <div class="form-group">
+                <label>Mật khẩu</label>
+                <input type="password" id="registerPassword" required>
+            </div>
+            <div class="form-group">
+                <label>Số điện thoại</label>
+                <input type="tel" id="registerPhone" required>
+            </div>
+            <button type="submit" class="btn-submit">Đăng ký</button>
+        </form>
+    </div>
+</div>
+
+<!-- Modal Đặt chỗ -->
+<div id="bookingModal" class="modal">
+
         <div class="modal-content">
             <span class="close" onclick="closeModal('bookingModal')">&times;</span>
             <h2 id="bookingTitle">Đặt chỗ</h2>
