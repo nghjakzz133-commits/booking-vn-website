@@ -299,16 +299,78 @@
         alert('Đã đăng xuất!');
     }
 
-    function bookVenue(venueId) {
-        if (!currentUser) {
-            alert('Vui lòng đăng nhập để đặt chỗ!');
-            openModal('loginModal');
-            return;
+            let selectedVenue = null;
+
+        function bookVenue(venueId) {
+            if (!currentUser) {
+                alert('Vui lòng đăng nhập để đặt chỗ!');
+                openModal('loginModal');
+                return;
+            }
+            
+            selectedVenue = venues.find(v => v.id === venueId);
+            document.getElementById('bookingTitle').textContent = `Đặt chỗ tại ${selectedVenue.name}`;
+            
+            // Auto-fill user info
+            if (currentUser) {
+                document.getElementById('bookingName').value = currentUser.name || '';
+                document.getElementById('bookingEmail').value = currentUser.email || '';
+                document.getElementById('bookingPhone').value = currentUser.phone || '';
+            }
+            
+            openModal('bookingModal');
         }
-        
-        const venue = venues.find(v => v.id === venueId);
-        alert(`Đặt chỗ thành công tại ${venue.name}!\nChúng tôi sẽ liên hệ với bạn qua email: ${currentUser.email}`);
-    }
+
+        function submitBooking(e) {
+            e.preventDefault();
+            
+            const bookingData = {
+                venue: selectedVenue.name,
+                venueAddress: selectedVenue.address,
+                name: document.getElementById('bookingName').value,
+                email: document.getElementById('bookingEmail').value,
+                phone: document.getElementById('bookingPhone').value,
+                date: document.getElementById('bookingDate').value,
+                time: document.getElementById('bookingTime').value,
+                guests: document.getElementById('bookingGuests').value,
+                note: document.getElementById('bookingNote').value
+            };
+            
+            // Send to EmailJS or your backend
+            sendBookingEmail(bookingData);
+        }
+
+        function sendBookingEmail(data) {
+            // Create mailto link (works on mobile)
+            const subject = `[BookingVN] Đặt chỗ tại ${data.venue}`;
+            const body = `
+Thông tin đặt chỗ:
+
+Địa điểm: ${data.venue}
+Địa chỉ: ${data.venueAddress}
+
+Khách hàng: ${data.name}
+Email: ${data.email}
+SĐT: ${data.phone}
+
+Ngày: ${data.date}
+Giờ: ${data.time}
+Số người: ${data.guests}
+
+Ghi chú: ${data.note || 'Không có'}
+            `.trim();
+            
+            const mailtoLink = `mailto:nghjakzz133@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+            
+            window.location.href = mailtoLink;
+            
+            closeModal('bookingModal');
+            alert('Đang mở ứng dụng email của bạn...');
+            
+            // Reset form
+            document.querySelector('#bookingModal form').reset();
+        }
+
 
     // Đóng modal khi click bên ngoài
     window.onclick = function(event) {
