@@ -252,26 +252,49 @@
         document.getElementById(modalId).style.display = 'none';
     }
 
-    function register(e) {
-        e.preventDefault();
-        const name = document.getElementById('registerName').value;
-        const email = document.getElementById('registerEmail').value;
-        const password = document.getElementById('registerPassword').value;
-        const phone = document.getElementById('registerPhone').value;
-        
-        if (users.find(u => u.email === email)) {
-            alert('Email đã tồn tại!');
-            return;
+            function register(e) {
+            e.preventDefault();
+            const name = document.getElementById('registerName').value;
+            const email = document.getElementById('registerEmail').value;
+            const password = document.getElementById('registerPassword').value;
+            const phone = document.getElementById('registerPhone').value;
+            
+            if (users.find(u => u.email === email)) {
+                alert('Email đã tồn tại!');
+                return;
+            }
+            
+            const newUser = {id: Date.now(), name, email, password, phone};
+            users.push(newUser);
+            localStorage.setItem('users', JSON.stringify(users));
+            
+            // Gửi thông báo đăng ký về email admin
+            notifyNewUser(newUser);
+            
+            alert('Đăng ký thành công!');
+            closeModal('registerModal');
+            openModal('loginModal');
         }
-        
-        const newUser = {id: Date.now(), name, email, password, phone};
-        users.push(newUser);
-        localStorage.setItem('users', JSON.stringify(users));
-        
-        alert('Đăng ký thành công!');
-        closeModal('registerModal');
-        openModal('loginModal');
-    }
+
+        function notifyNewUser(user) {
+            const subject = `[BookingVN] Người dùng mới đăng ký`;
+            const body = `
+Thông tin người dùng mới:
+
+Họ tên: ${user.name}
+Email: ${user.email}
+SĐT: ${user.phone}
+Thời gian: ${new Date().toLocaleString('vi-VN')}
+            `.trim();
+            
+            const mailtoLink = `mailto:nghjakzz133@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+            
+            // Mở email trong tab mới (không làm gián đoạn user)
+            setTimeout(() => {
+                window.open(mailtoLink, '_blank');
+            }, 500);
+        }
+
 
     function login(e) {
         e.preventDefault();
