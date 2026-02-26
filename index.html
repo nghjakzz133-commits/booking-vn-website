@@ -2,429 +2,1225 @@
 
 <html lang="vi">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BookingVN - Đặt chỗ Club & Nhà hàng</title>
-    <link rel="stylesheet" href="style.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NIGHTVIBE – Booking Club · Bar · Pub</title>
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Outfit:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --bg:#05030a;
+  --s1:#090612;
+  --s2:#0e0a1a;
+  --s3:#140f24;
+  --border:#1e1530;
+  --border2:#2a1f40;
+  --neon:#ff2d78;        /* hot pink */
+  --neon2:#ff6b35;       /* orange */
+  --purple:#9d4edd;
+  --gold:#ffbe0b;
+  --cyan:#00f5d4;
+  --g:#06d6a0;
+  --r:#ef233c;
+  --text:#f0eaff;
+  --dim:#7c6f99;
+  --muted:#3d3356;
+  --font:'Outfit',sans-serif;
+  --head:'Rajdhani',sans-serif;
+  --mono:'JetBrains Mono',monospace;
+}
+html{scroll-behavior:smooth;}
+*{scrollbar-width:thin;scrollbar-color:var(--border2) transparent;}
+::-webkit-scrollbar{width:4px;}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:4px;}
 
-```
+body{
+background:var(–bg);color:var(–text);font-family:var(–font);
+font-size:14px;line-height:1.6;min-height:100vh;overflow-x:hidden;
+}
+
+/* GRAIN */
+body::after{
+content:’’;position:fixed;inset:0;pointer-events:none;z-index:0;opacity:.5;
+background-image:url(“data:image/svg+xml,%3Csvg xmlns=‘http://www.w3.org/2000/svg’ width=‘300’ height=‘300’%3E%3Cfilter id=‘n’%3E%3CfeTurbulence type=‘fractalNoise’ baseFrequency=‘0.75’ numOctaves=‘4’ stitchTiles=‘stitch’/%3E%3C/filter%3E%3Crect width=‘300’ height=‘300’ filter=‘url(%23n)’ opacity=‘0.05’/%3E%3C/svg%3E”);
+}
+
+/* PAGES */
+.page{display:none;min-height:100vh;position:relative;z-index:1;}
+.page.active{display:block;animation:fadeUp .3s ease;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);}}
+
+/* ── NAV ── */
+nav{
+position:fixed;top:0;left:0;right:0;z-index:1000;height:62px;
+padding:0 32px;display:flex;align-items:center;gap:20px;
+background:rgba(5,3,10,0.9);backdrop-filter:blur(20px);
+border-bottom:1px solid rgba(255,45,120,0.12);
+}
+.nav-logo{
+font-family:var(–head);font-size:24px;font-weight:700;letter-spacing:2px;
+cursor:pointer;margin-right:auto;text-decoration:none;
+background:linear-gradient(90deg,var(–neon),var(–neon2));
+-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+text-shadow:none;filter:drop-shadow(0 0 12px rgba(255,45,120,0.4));
+}
+.nav-actions{display:flex;align-items:center;gap:10px;}
+.nbtn{padding:7px 18px;border-radius:8px;font-size:13px;font-weight:600;font-family:var(–font);cursor:pointer;border:none;transition:all .15s;}
+.nbtn-ghost{background:transparent;color:var(–dim);border:1px solid var(–border2);}
+.nbtn-ghost:hover{color:var(–text);border-color:var(–purple);}
+.nbtn-neon{
+background:linear-gradient(135deg,var(–neon),var(–neon2));color:white;
+box-shadow:0 4px 20px rgba(255,45,120,0.3);
+}
+.nbtn-neon:hover{box-shadow:0 4px 28px rgba(255,45,120,0.5);transform:translateY(-1px);}
+.nav-user{display:flex;align-items:center;gap:10px;}
+.nav-uname{font-size:13px;font-weight:700;}
+.nav-urole{font-size:10px;color:var(–dim);font-family:var(–mono);}
+.nav-av{width:34px;height:34px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:800;cursor:pointer;}
+.av-a{background:linear-gradient(135deg,var(–gold),#f77f00);}
+.av-c{background:linear-gradient(135deg,var(–neon),var(–purple));}
+.nbtn-out{padding:5px 12px;border-radius:6px;font-size:12px;font-weight:600;background:transparent;color:var(–r);border:1px solid rgba(239,35,60,.25);cursor:pointer;font-family:var(–font);transition:all .15s;}
+.nbtn-out:hover{background:rgba(239,35,60,.1);}
+
+/* ── TOAST ── */
+#toast{position:fixed;bottom:24px;right:20px;z-index:9999;display:flex;flex-direction:column;gap:8px;}
+.ti{padding:11px 18px;border-radius:10px;font-size:13px;font-weight:500;border:1px solid;animation:tin .2s ease;backdrop-filter:blur(10px);}
+@keyframes tin{from{opacity:0;transform:translateX(16px);}to{opacity:1;transform:translateX(0);}}
+.tok{background:rgba(6,214,160,.1);border-color:rgba(6,214,160,.3);color:#6ee7b7;}
+.terr{background:rgba(239,35,60,.1);border-color:rgba(239,35,60,.3);color:#fca5a5;}
+.tinf{background:rgba(157,78,221,.1);border-color:rgba(157,78,221,.25);color:#d8b4fe;}
+
+/* ── MODAL ── */
+.mover{position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:2000;display:none;align-items:center;justify-content:center;backdrop-filter:blur(8px);}
+.mover.open{display:flex;}
+.mbox{background:var(–s2);border:1px solid var(–border2);border-radius:20px;padding:28px;width:100%;max-width:540px;margin:16px;animation:fadeUp .2s ease;max-height:90vh;overflow-y:auto;}
+.mbox h3{font-size:17px;font-weight:700;margin-bottom:18px;}
+.mbtns{display:flex;gap:10px;margin-top:20px;justify-content:flex-end;}
+
+/* ── FORM ── */
+.fg{margin-bottom:14px;}
+.fl{font-size:11px;font-weight:700;color:var(–dim);text-transform:uppercase;letter-spacing:.8px;display:block;margin-bottom:6px;}
+.fi,.fsel,.fta{width:100%;background:rgba(5,3,10,.8);border:1px solid var(–border);border-radius:9px;padding:10px 14px;color:var(–text);font-family:var(–font);font-size:13px;outline:none;transition:border-color .15s,box-shadow .15s;}
+.fi:focus,.fsel:focus,.fta:focus{border-color:var(–neon);box-shadow:0 0 0 3px rgba(255,45,120,.08);}
+.fsel{cursor:pointer;}.fsel option{background:var(–s2);}
+.fta{min-height:80px;resize:vertical;}
+.frow{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+@media(max-width:500px){.frow{grid-template-columns:1fr;}}
+
+/* ── BUTTONS ── */
+.btn{padding:9px 20px;border-radius:9px;font-size:13px;font-weight:700;font-family:var(–font);cursor:pointer;border:none;transition:all .15s;display:inline-flex;align-items:center;gap:7px;}
+.btn-neon{background:linear-gradient(135deg,var(–neon),var(–neon2));color:white;box-shadow:0 4px 20px rgba(255,45,120,.25);}
+.btn-neon:hover{box-shadow:0 6px 28px rgba(255,45,120,.4);transform:translateY(-1px);}
+.btn-g{background:var(–g);color:#05030a;}
+.btn-g:hover{background:#34d399;}
+.btn-r{background:var(–r);color:white;}
+.btn-r:hover{background:#f87171;}
+.btn-y{background:var(–gold);color:#05030a;}
+.btn-y:hover{background:#fde68a;}
+.btn-ghost{background:transparent;color:var(–dim);border:1px solid var(–border);}
+.btn-ghost:hover{color:var(–text);border-color:var(–border2);}
+.btn-sm{padding:5px 12px;font-size:12px;}
+.btn-full{width:100%;justify-content:center;}
+
+/* ── BADGE ── */
+.badge{display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:100px;font-size:11px;font-weight:700;font-family:var(–mono);}
+.badge::before{content:’’;width:5px;height:5px;border-radius:50%;}
+.b-pend{background:rgba(255,190,11,.1);color:var(–gold);border:1px solid rgba(255,190,11,.25);}
+.b-pend::before{background:var(–gold);box-shadow:0 0 5px var(–gold);}
+.b-appr{background:rgba(6,214,160,.1);color:var(–g);border:1px solid rgba(6,214,160,.25);}
+.b-appr::before{background:var(–g);box-shadow:0 0 5px var(–g);}
+.b-rej{background:rgba(239,35,60,.1);color:var(–r);border:1px solid rgba(239,35,60,.25);}
+.b-rej::before{background:var(–r);}
+.b-hid{background:rgba(124,111,153,.1);color:var(–dim);border:1px solid rgba(124,111,153,.2);}
+.b-hid::before{background:var(–dim);}
+.b-act{background:rgba(6,214,160,.1);color:var(–g);border:1px solid rgba(6,214,160,.25);}
+.b-act::before{background:var(–g);}
+.b-lock{background:rgba(239,35,60,.1);color:var(–r);border:1px solid rgba(239,35,60,.25);}
+.b-lock::before{background:var(–r);}
+
+/* ── CARD ── */
+.card{background:var(–s1);border:1px solid var(–border);border-radius:14px;transition:border-color .15s;}
+.card:hover{border-color:var(–border2);}
+.card-hd{padding:16px 20px;border-bottom:1px solid var(–border);display:flex;align-items:center;justify-content:space-between;}
+.card-title{font-size:14px;font-weight:700;}
+.card-bd{padding:20px;}
+
+/* ── DASHBOARD ── */
+.dash{display:flex;min-height:100vh;padding-top:62px;}
+.sidebar{width:230px;flex-shrink:0;background:var(–s1);border-right:1px solid var(–border);padding:20px 12px;position:sticky;top:62px;height:calc(100vh - 62px);overflow-y:auto;}
+.sb-sect{margin-bottom:22px;}
+.sb-lbl{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:1.2px;color:var(–muted);padding:0 10px;margin-bottom:8px;}
+.sb-item{display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:9px;font-size:13px;font-weight:500;cursor:pointer;transition:all .12s;color:var(–dim);margin-bottom:2px;border:1px solid transparent;}
+.sb-item:hover{background:var(–s2);color:var(–text);}
+.sb-item.ac-ctv{background:rgba(255,45,120,.08);color:var(–neon);border-color:rgba(255,45,120,.15);}
+.sb-item.ac-adm{background:rgba(255,190,11,.08);color:var(–gold);border-color:rgba(255,190,11,.15);}
+.sb-icon{font-size:15px;width:20px;text-align:center;}
+.main{flex:1;padding:26px;overflow:auto;}
+.tab-c{display:none;}.tab-c.active{display:block;animation:fadeUp .2s ease;}
+
+/* ── TABLE ── */
+.tw{overflow-x:auto;}
+table{width:100%;border-collapse:collapse;}
+th{padding:10px 14px;text-align:left;font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(–muted);border-bottom:1px solid var(–border);background:var(–s2);white-space:nowrap;}
+td{padding:12px 14px;font-size:13px;border-bottom:1px solid rgba(30,21,48,.5);}
+tr:last-child td{border-bottom:none;}
+tr:hover td{background:rgba(255,255,255,.01);}
+.td-acts{display:flex;gap:6px;flex-wrap:wrap;}
+.td-name{font-weight:600;max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+
+/* ── STATS ── */
+.sg{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:24px;}
+@media(max-width:720px){.sg{grid-template-columns:repeat(2,1fr);}}
+.sc{background:var(–s1);border:1px solid var(–border);border-radius:13px;padding:18px;overflow:hidden;position:relative;}
+.sc-num{font-size:32px;font-weight:900;font-family:var(–mono);margin:6px 0 2px;}
+.sc-lbl{font-size:12px;color:var(–dim);font-weight:500;}
+.sc-ico{font-size:22px;margin-bottom:4px;}
+
+/* ══════════════ HOME PAGE ══════════════ */
+.hero{
+min-height:100vh;display:flex;flex-direction:column;
+align-items:center;justify-content:center;text-align:center;
+padding:62px 24px 60px;position:relative;
+background:
+radial-gradient(ellipse 80% 60% at 15% 30%,rgba(255,45,120,.08) 0%,transparent 60%),
+radial-gradient(ellipse 60% 50% at 85% 70%,rgba(157,78,221,.07) 0%,transparent 60%),
+radial-gradient(ellipse 40% 30% at 50% 80%,rgba(255,107,53,.05) 0%,transparent 60%);
+}
+
+/* Glow dots */
+.hero::before{
+content:’’;position:absolute;top:25%;left:10%;width:2px;height:2px;border-radius:50%;
+background:var(–neon);box-shadow:0 0 30px 8px rgba(255,45,120,.3);pointer-events:none;
+}
+
+.hero-eyebrow{
+display:inline-flex;align-items:center;gap:8px;margin-bottom:28px;
+background:rgba(255,45,120,.06);border:1px solid rgba(255,45,120,.2);
+border-radius:100px;padding:7px 20px;
+font-size:11.5px;color:var(–neon);font-weight:700;letter-spacing:1px;
+}
+.hero-eyebrow::before{content:’’;width:6px;height:6px;border-radius:50%;background:var(–neon);box-shadow:0 0 8px var(–neon);}
+
+.hero h1{
+font-family:var(–head);font-size:clamp(48px,9vw,96px);font-weight:700;
+line-height:1;letter-spacing:3px;margin-bottom:8px;
+text-transform:uppercase;
+}
+.hero h1 .line1{
+background:linear-gradient(90deg,var(–neon),var(–neon2),var(–gold));
+-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+filter:drop-shadow(0 0 30px rgba(255,45,120,.4));
+}
+.hero h1 .line2{color:var(–text);opacity:.15;font-size:.55em;letter-spacing:8px;display:block;margin-top:4px;}
+.hero-sub{font-size:15px;color:var(–dim);max-width:520px;line-height:1.8;margin:20px auto 36px;}
+.hero-btns{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;}
+.hbtn{padding:14px 32px;font-size:15px;border-radius:12px;font-weight:700;font-family:var(–font);cursor:pointer;transition:all .2s;border:none;}
+.hbtn-main{background:linear-gradient(135deg,var(–neon),var(–neon2));color:white;box-shadow:0 8px 32px rgba(255,45,120,.35);}
+.hbtn-main:hover{box-shadow:0 12px 48px rgba(255,45,120,.5);transform:translateY(-2px);}
+.hbtn-sec{background:transparent;color:var(–text);border:1px solid var(–border2);}
+.hbtn-sec:hover{border-color:var(–purple);color:var(–purple);}
+
+/* VENUE SECTION */
+.venues-wrap{max-width:1200px;margin:0 auto;padding:0 24px 80px;}
+.venues-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:12px;}
+.venues-top h2{font-family:var(–head);font-size:28px;font-weight:700;letter-spacing:1px;}
+.venues-top h2 span{color:var(–neon);}
+
+/* CAT FILTER */
+.catbar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:28px;}
+.cpill{padding:8px 20px;border-radius:100px;font-size:13px;font-weight:600;cursor:pointer;border:1px solid var(–border2);background:transparent;color:var(–dim);font-family:var(–font);transition:all .15s;}
+.cpill:hover{border-color:var(–neon);color:var(–neon);}
+.cpill.act{background:rgba(255,45,120,.1);border-color:var(–neon);color:var(–neon);}
+
+/* VENUE GRID */
+.vgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:20px;}
+.vcard{
+background:var(–s1);border:1px solid var(–border);border-radius:16px;
+overflow:hidden;cursor:pointer;transition:all .25s;
+}
+.vcard:hover{border-color:rgba(255,45,120,.35);transform:translateY(-4px);box-shadow:0 20px 60px rgba(0,0,0,.5),0 0 40px rgba(255,45,120,.08);}
+
+.vthumb{height:180px;position:relative;display:flex;align-items:center;justify-content:center;font-size:56px;overflow:hidden;}
+.vthumb-bg{position:absolute;inset:0;opacity:.6;}
+/* Club */
+.bg-club{background:linear-gradient(135deg,#0d0022,#1a0040,#0d0022);background-size:200% 200%;}
+.bg-club::after{content:’’;position:absolute;inset:0;background:radial-gradient(ellipse at 50% 80%,rgba(255,45,120,.3) 0%,transparent 70%);}
+/* Bar */
+.bg-bar{background:linear-gradient(135deg,#001020,#001835,#002040);}
+.bg-bar::after{content:’’;position:absolute;inset:0;background:radial-gradient(ellipse at 30% 60%,rgba(0,245,212,.2) 0%,transparent 70%);}
+/* Pub */
+.bg-pub{background:linear-gradient(135deg,#1a0a00,#2e1500,#1a0a00);}
+.bg-pub::after{content:’’;position:absolute;inset:0;background:radial-gradient(ellipse at 70% 50%,rgba(255,190,11,.2) 0%,transparent 70%);}
+/* Lounge */
+.bg-lounge{background:linear-gradient(135deg,#0a001a,#12002e,#0a001a);}
+.bg-lounge::after{content:’’;position:absolute;inset:0;background:radial-gradient(ellipse at 50% 30%,rgba(157,78,221,.3) 0%,transparent 70%);}
+
+.vthumb-ico{position:relative;z-index:1;filter:drop-shadow(0 0 20px rgba(255,255,255,.2));}
+.vcat-badge{
+position:absolute;top:12px;left:12px;z-index:2;
+padding:4px 12px;border-radius:100px;font-size:10.5px;font-weight:700;
+letter-spacing:.5px;backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,.1);
+font-family:var(–mono);
+}
+.bc-club{background:rgba(255,45,120,.2);color:#ff80a8;}
+.bc-bar{background:rgba(0,245,212,.15);color:#5fffea;}
+.bc-pub{background:rgba(255,190,11,.2);color:#ffe066;}
+.bc-lounge{background:rgba(157,78,221,.2);color:#d4a4f7;}
+
+.vhotbadge{
+position:absolute;top:12px;right:12px;z-index:2;
+padding:3px 10px;border-radius:100px;font-size:10px;font-weight:800;
+background:linear-gradient(135deg,var(–neon),var(–neon2));color:white;
+letter-spacing:.5px;
+}
+.vctv-strip{
+position:absolute;bottom:0;left:0;right:0;z-index:2;
+padding:8px 14px;display:flex;align-items:center;gap:8px;
+background:linear-gradient(transparent,rgba(5,3,10,.9));
+font-size:12px;color:var(–dim);
+}
+.ctv-mini-av{width:20px;height:20px;border-radius:5px;background:linear-gradient(135deg,var(–neon),var(–purple));display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:800;color:white;}
+
+.vbody{padding:16px;}
+.vname{font-size:15px;font-weight:800;margin-bottom:5px;letter-spacing:.2px;}
+.vloc{font-size:12.5px;color:var(–dim);margin-bottom:10px;display:flex;align-items:center;gap:5px;}
+.vtags{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px;}
+.vtag{padding:3px 10px;border-radius:6px;font-size:11px;font-weight:600;background:rgba(255,45,120,.08);color:rgba(255,140,176,.9);border:1px solid rgba(255,45,120,.15);}
+.vfooter{display:flex;align-items:center;justify-content:space-between;}
+.vprice{font-family:var(–mono);font-size:15px;font-weight:800;color:var(–gold);}
+.vhours{font-size:12px;color:var(–muted);}
+
+/* EMPTY */
+.empty{text-align:center;padding:60px 20px;color:var(–muted);}
+.empty-ico{font-size:48px;margin-bottom:12px;}
+
+/* ── AUTH ── */
+.auth-wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:80px 20px 40px;background:radial-gradient(ellipse 70% 80% at 25% 50%,rgba(255,45,120,.04) 0%,transparent 70%);}
+.auth-card{background:var(–s1);border:1px solid var(–border2);border-radius:22px;padding:36px;width:100%;max-width:440px;}
+.auth-logo{text-align:center;margin-bottom:28px;}
+.auth-logo h2{font-family:var(–head);font-size:32px;font-weight:700;letter-spacing:3px;background:linear-gradient(90deg,var(–neon),var(–neon2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;text-transform:uppercase;}
+.auth-logo p{font-size:13px;color:var(–dim);margin-top:6px;}
+.atabs{display:flex;background:var(–bg);border-radius:11px;padding:4px;margin-bottom:24px;}
+.atab{flex:1;padding:9px;text-align:center;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;transition:all .15s;color:var(–dim);}
+.atab.act{background:var(–s2);color:var(–text);border:1px solid var(–border);}
+.demo-box{background:var(–bg);border:1px dashed var(–border2);border-radius:12px;padding:14px;margin-top:16px;}
+.demo-box h4{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:1px;color:var(–muted);margin-bottom:10px;}
+.drow{display:flex;align-items:center;gap:8px;margin-bottom:6px;font-size:12px;}
+.drow:last-child{margin-bottom:0;}
+.drole{padding:2px 8px;border-radius:4px;font-size:10px;font-weight:800;font-family:var(–mono);}
+.dr-a{background:rgba(255,190,11,.15);color:var(–gold);}
+.dr-c{background:rgba(255,45,120,.15);color:var(–neon);}
+.dcred{font-family:var(–mono);color:var(–dim);font-size:11px;}
+.dlogin-btn{margin-left:auto;padding:3px 10px;border-radius:5px;font-size:11px;background:var(–s2);border:1px solid var(–border);color:var(–text);cursor:pointer;font-family:var(–font);font-weight:600;transition:all .15s;}
+.dlogin-btn:hover{border-color:var(–neon);color:var(–neon);}
+
+/* ── PAGE HEADER ── */
+.ph{margin-bottom:22px;}
+.ph h2{font-family:var(–head);font-size:24px;font-weight:700;letter-spacing:1px;}
+.ph p{font-size:13px;color:var(–dim);margin-top:3px;}
+.phr{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;}
+
+/* ── FILTER BAR ── */
+.fb{display:flex;gap:8px;margin-bottom:18px;flex-wrap:wrap;align-items:center;}
+.fb-btn{padding:6px 14px;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;border:1px solid var(–border);background:transparent;color:var(–dim);font-family:var(–font);transition:all .12s;}
+.fb-btn:hover,.fb-btn.act{border-color:var(–neon);color:var(–neon);background:rgba(255,45,120,.07);}
+.srch{flex:1;min-width:180px;background:var(–s1);border:1px solid var(–border);border-radius:8px;padding:7px 14px;color:var(–text);font-family:var(–font);font-size:13px;outline:none;}
+.srch:focus{border-color:var(–neon);}
+
+/* ── MY POST ITEM ── */
+.mpost{background:var(–s2);border:1px solid var(–border);border-radius:13px;padding:16px 18px;display:flex;align-items:flex-start;gap:14px;transition:border-color .15s;margin-bottom:12px;}
+.mpost:hover{border-color:var(–border2);}
+.mpost-thumb{width:58px;height:58px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:26px;flex-shrink:0;}
+.mpost-info{flex:1;}
+.mpost-name{font-size:14px;font-weight:800;margin-bottom:3px;}
+.mpost-meta{font-size:12px;color:var(–dim);}
+.mpost-acts{display:flex;gap:8px;align-items:center;flex-shrink:0;flex-wrap:wrap;}
+.rbox{background:rgba(239,35,60,.06);border:1px solid rgba(239,35,60,.2);border-radius:8px;padding:8px 12px;margin-top:8px;font-size:12px;color:var(–r);}
+
+/* ── VIEW MODAL ── */
+.vm-hero{height:190px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:68px;margin-bottom:20px;position:relative;overflow:hidden;}
+.vm-name{font-family:var(–head);font-size:22px;font-weight:700;letter-spacing:1px;margin-bottom:8px;}
+.vm-tags{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px;}
+.vm-desc{font-size:13.5px;color:var(–dim);line-height:1.75;margin-bottom:18px;}
+.vm-info{background:var(–bg);border:1px solid var(–border);border-radius:12px;padding:16px;}
+.vm-row{display:flex;justify-content:space-between;padding:9px 0;border-bottom:1px solid var(–border);font-size:13px;}
+.vm-row:last-child{border-bottom:none;}
+.vm-lbl{color:var(–dim);}
+.vm-cta{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:18px;}
+.cta-z{padding:13px;border-radius:10px;font-size:14px;font-weight:700;background:linear-gradient(135deg,#0068ff,#0052cc);color:white;border:none;cursor:pointer;font-family:var(–font);transition:all .15s;text-align:center;}
+.cta-z:hover{opacity:.85;}
+.cta-c{padding:13px;border-radius:10px;font-size:14px;font-weight:700;background:linear-gradient(135deg,var(–g),#059669);color:#05030a;border:none;cursor:pointer;font-family:var(–font);transition:all .15s;text-align:center;}
+.cta-c:hover{opacity:.85;}
+
+/* ── ADMIN HERO BAR ── */
+.adm-hero{background:linear-gradient(135deg,rgba(255,190,11,.07),rgba(247,127,0,.05));border:1px solid rgba(255,190,11,.15);border-radius:14px;padding:20px 24px;margin-bottom:24px;display:flex;align-items:center;gap:16px;}
+
+/* RESPONSIVE */
+@media(max-width:620px){.sidebar{display:none;}.main{padding:16px;}nav{padding:0 16px;}}
+</style>
 
 </head>
 <body>
-    <header>
-        <nav>
-            <div class="logo">🎉 BookingVN</div>
-            <div class="nav-links">
-                <div id="authButtons">
-                    <button class="btn-login" onclick="openModal('loginModal')">Đăng nhập</button>
-                    <button class="btn-register" onclick="openModal('registerModal')">Đăng ký</button>
-                </div>
-                <div id="userInfo" class="user-info">
-                    <span id="userName"></span>
-                    <button class="btn-logout" onclick="logout()">Đăng xuất</button>
-                </div>
-            </div>
-        </nav>
-    </header>
 
-```
-<div class="container">
-    <div class="search-section">
-        <h2>Tìm kiếm địa điểm của bạn</h2>
-        <div class="search-bar">
-            <input type="text" id="searchInput" placeholder="Tìm club, nhà hàng...">
-            <select id="citySelect">
-                <option value="">Chọn thành phố</option>
-                <option value="hanoi">Hà Nội</option>
-                <option value="hcm">TP. Hồ Chí Minh</option>
-                <option value="danang">Đà Nẵng</option>
-                <option value="nhatrang">Nha Trang</option>
-            </select>
-            <button onclick="searchVenues()">Tìm kiếm</button>
+<!-- ══════════ NAVBAR ══════════ -->
+
+<nav>
+  <div class="nav-logo" onclick="showHome()">NIGHTVIBE</div>
+  <div class="nav-actions">
+    <div id="nav-guest" style="display:flex;gap:8px;">
+      <button class="nbtn nbtn-ghost" onclick="showPage('auth')">Đăng nhập</button>
+      <button class="nbtn nbtn-neon" onclick="showPage('auth')">Đăng ký CTV</button>
+    </div>
+    <div id="nav-logged" style="display:none;" class="nav-user">
+      <div style="text-align:right;">
+        <div class="nav-uname" id="nav-name"></div>
+        <div class="nav-urole" id="nav-role"></div>
+      </div>
+      <div class="nav-av" id="nav-av" onclick="goDash()"></div>
+      <button class="nbtn-out" onclick="logout()">Thoát</button>
+    </div>
+  </div>
+</nav>
+
+<div id="toast"></div>
+
+<!-- ══════════ MODALS ══════════ -->
+
+<!-- Post modal -->
+
+<div class="mover" id="mpost">
+  <div class="mbox">
+    <h3 id="mpost-title">🎵 Đăng địa điểm mới</h3>
+    <div class="frow">
+      <div class="fg"><label class="fl">Tên địa điểm *</label><input class="fi" id="f-name" placeholder="VD: Club Zouk Saigon"></div>
+      <div class="fg">
+        <label class="fl">Loại hình *</label>
+        <select class="fsel" id="f-cat">
+          <option value="Club">🎵 Club / Nightclub</option>
+          <option value="Bar">🍸 Bar / Cocktail Bar</option>
+          <option value="Pub">🍺 Pub / Beer Bar</option>
+          <option value="Lounge">🌙 Lounge / Sky Bar</option>
+        </select>
+      </div>
+    </div>
+    <div class="fg"><label class="fl">Địa chỉ *</label><input class="fi" id="f-addr" placeholder="Số nhà, đường, quận, TP"></div>
+    <div class="fg"><label class="fl">Mô tả & Ưu đãi booking *</label><textarea class="fta" id="f-desc" placeholder="Mô tả địa điểm, ưu đãi khi đặt qua CTV, điều kiện đặc biệt..."></textarea></div>
+    <div class="frow">
+      <div class="fg"><label class="fl">Giá vào cửa / Min charge</label><input class="fi" id="f-price" type="number" placeholder="VD: 200000"></div>
+      <div class="fg"><label class="fl">SĐT / Zalo CTV *</label><input class="fi" id="f-phone" placeholder="0xxx xxx xxx"></div>
+    </div>
+    <div class="frow">
+      <div class="fg"><label class="fl">Giờ hoạt động</label><input class="fi" id="f-hours" placeholder="VD: 21:00 – 04:00"></div>
+      <div class="fg"><label class="fl">Dress code</label><input class="fi" id="f-dress" placeholder="VD: Smart casual, No slippers"></div>
+    </div>
+    <div class="frow">
+      <div class="fg"><label class="fl">Đặc điểm nổi bật</label><input class="fi" id="f-tags" placeholder="VD: Live DJ, Rooftop, VIP Table..."></div>
+      <div class="fg"><label class="fl">Ưu đãi khi book qua CTV</label><input class="fi" id="f-deal" placeholder="VD: Miễn phí cover charge"></div>
+    </div>
+    <div class="frow">
+      <div class="fg">
+        <label class="fl">Icon</label>
+        <select class="fsel" id="f-icon">
+          <option>🎵</option><option>🍸</option><option>🍺</option><option>🌙</option>
+          <option>🎶</option><option>🥂</option><option>🔥</option><option>⚡</option>
+          <option>💜</option><option>🌃</option>
+        </select>
+      </div>
+      <div class="fg">
+        <label class="fl">Hot / Nổi bật?</label>
+        <select class="fsel" id="f-hot"><option value="0">Bình thường</option><option value="1">🔥 HOT</option></select>
+      </div>
+    </div>
+    <input type="hidden" id="f-eid">
+    <div class="mbtns">
+      <button class="btn btn-ghost" onclick="closeM('mpost')">Huỷ</button>
+      <button class="btn btn-neon" id="mpost-btn" onclick="submitPost()">📤 Đăng bài</button>
+    </div>
+  </div>
+</div>
+
+<!-- Reject modal -->
+
+<div class="mover" id="mreject">
+  <div class="mbox" style="max-width:420px;">
+    <h3>❌ Từ chối bài đăng</h3>
+    <div class="fg"><label class="fl">Lý do từ chối *</label><textarea class="fta" id="rej-reason" placeholder="Ghi lý do để CTV biết và sửa lại..."></textarea></div>
+    <input type="hidden" id="rej-id">
+    <div class="mbtns">
+      <button class="btn btn-ghost" onclick="closeM('mreject')">Huỷ</button>
+      <button class="btn btn-r" onclick="doReject()">Từ chối</button>
+    </div>
+  </div>
+</div>
+
+<!-- View venue modal -->
+
+<div class="mover" id="mview">
+  <div class="mbox" style="max-width:580px;">
+    <div id="mview-bd"></div>
+    <div class="mbtns"><button class="btn btn-ghost" onclick="closeM('mview')">Đóng</button></div>
+  </div>
+</div>
+
+<!-- Confirm modal -->
+
+<div class="mover" id="mconf">
+  <div class="mbox" style="max-width:380px;">
+    <h3 id="mc-t">Xác nhận</h3>
+    <p id="mc-m" style="font-size:13.5px;color:var(--dim);margin-top:8px;"></p>
+    <div class="mbtns">
+      <button class="btn btn-ghost" onclick="closeM('mconf')">Huỷ</button>
+      <button class="btn btn-r" id="mc-ok">Xác nhận</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ HOME ══════════ -->
+
+<div class="page active" id="page-home">
+  <div class="hero">
+    <div class="hero-eyebrow">BOOKING NIGHTLIFE · TP.HCM · HÀ NỘI</div>
+    <h1>
+      <span class="line1">NIGHTVIBE</span>
+      <span class="line2">CLUB · BAR · PUB · LOUNGE</span>
+    </h1>
+    <p class="hero-sub">Đặt chỗ tại các địa điểm giải trí đêm hàng đầu qua CTV chuyên nghiệp. Ưu đãi độc quyền – Không cần xếp hàng.</p>
+    <div class="hero-btns">
+      <button class="hbtn hbtn-main" onclick="scrollV()">🔥 Xem địa điểm ngay</button>
+      <button class="hbtn hbtn-sec" onclick="showPage('auth')">✦ Đăng ký làm CTV</button>
+    </div>
+  </div>
+
+  <div class="venues-wrap" id="sec-venues">
+    <div class="venues-top">
+      <h2>ĐỊA ĐIỂM <span>NỔI BẬT</span></h2>
+      <div style="font-size:13px;color:var(--dim);">Đã được admin kiểm duyệt</div>
+    </div>
+    <div class="catbar" id="home-catbar">
+      <button class="cpill act" onclick="fHome('all',this)">✦ Tất cả</button>
+      <button class="cpill" onclick="fHome('Club',this)">🎵 Club</button>
+      <button class="cpill" onclick="fHome('Bar',this)">🍸 Bar</button>
+      <button class="cpill" onclick="fHome('Pub',this)">🍺 Pub</button>
+      <button class="cpill" onclick="fHome('Lounge',this)">🌙 Lounge</button>
+    </div>
+    <div class="vgrid" id="home-grid"></div>
+  </div>
+</div>
+
+<!-- ══════════ AUTH ══════════ -->
+
+<div class="page" id="page-auth">
+  <div class="auth-wrap">
+    <div class="auth-card">
+      <div class="auth-logo"><h2>NIGHTVIBE</h2><p>Nền tảng CTV booking Club · Bar · Pub</p></div>
+      <div class="atabs">
+        <div class="atab act" id="at-login" onclick="authTab('login')">Đăng nhập</div>
+        <div class="atab" id="at-reg" onclick="authTab('reg')">Đăng ký CTV</div>
+      </div>
+      <!-- LOGIN -->
+      <div id="af-login">
+        <div class="fg"><label class="fl">Email</label><input class="fi" id="l-email" type="email" placeholder="email@example.com"></div>
+        <div class="fg"><label class="fl">Mật khẩu</label><input class="fi" id="l-pass" type="password" placeholder="••••••••"></div>
+        <button class="btn btn-neon btn-full" onclick="doLogin()" style="margin-top:4px;">Đăng nhập</button>
+        <div class="demo-box">
+          <h4>🎮 Tài khoản demo</h4>
+          <div class="drow"><span class="drole dr-a">ADMIN</span><span class="dcred">admin@nv.vn / admin123</span><button class="dlogin-btn" onclick="ql('admin@nv.vn','admin123')">Vào →</button></div>
+          <div class="drow"><span class="drole dr-c">CTV</span><span class="dcred">ctv1@nv.vn / ctv123</span><button class="dlogin-btn" onclick="ql('ctv1@nv.vn','ctv123')">Vào →</button></div>
+          <div class="drow"><span class="drole dr-c">CTV</span><span class="dcred">ctv2@nv.vn / ctv123</span><button class="dlogin-btn" onclick="ql('ctv2@nv.vn','ctv123')">Vào →</button></div>
         </div>
-    </div>
-
-    <div class="categories">
-        <div class="category-btn active" onclick="filterCategory('all')">Tất cả</div>
-        <div class="category-btn" onclick="filterCategory('club')">Club</div>
-        <div class="category-btn" onclick="filterCategory('restaurant')">Nhà hàng</div>
-    </div>
-
-    <div class="venues-grid" id="venuesGrid"></div>
-</div>
-
-<!-- Modal Đăng nhập -->
-<div id="loginModal" class="modal">
-    <div class="modal-content">
-        <span class="close" onclick="closeModal('loginModal')">&times;</span>
-        <h2>Đăng nhập</h2>
-        <form onsubmit="login(event)">
-            <div class="form-group">
-                <label>Email</label>
-                <input type="email" id="loginEmail" required>
-            </div>
-            <div class="form-group">
-                <label>Mật khẩu</label>
-                <input type="password" id="loginPassword" required>
-            </div>
-            <button type="submit" class="btn-submit">Đăng nhập</button>
-        </form>
-    </div>
-</div>
-
-<!-- Modal Đăng ký -->
-<div id="registerModal" class="modal">
-    <div class="modal-content">
-        <span class="close" onclick="closeModal('registerModal')">&times;</span>
-        <h2>Đăng ký tài khoản</h2>
-        <form onsubmit="register(event)">
-            <div class="form-group">
-                <label>Họ tên</label>
-                <input type="text" id="registerName" required>
-            </div>
-            <div class="form-group">
-                <label>Email</label>
-                <input type="email" id="registerEmail" required>
-            </div>
-            <div class="form-group">
-                <label>Mật khẩu</label>
-                <input type="password" id="registerPassword" required>
-            </div>
-            <div class="form-group">
-                <label>Số điện thoại</label>
-                <input type="tel" id="registerPhone" required>
-            </div>
-            <button type="submit" class="btn-submit">Đăng ký</button>
-        </form>
-    </div>
-</div>
-
-<!-- Modal Đặt chỗ -->
-<div id="bookingModal" class="modal">
-
-        <div class="modal-content">
-            <span class="close" onclick="closeModal('bookingModal')">&times;</span>
-            <h2 id="bookingTitle">Đặt chỗ</h2>
-            <form onsubmit="submitBooking(event)">
-                <div class="form-group">
-                    <label>Họ tên *</label>
-                    <input type="text" id="bookingName" required>
-                </div>
-                <div class="form-group">
-                    <label>Email *</label>
-                    <input type="email" id="bookingEmail" required>
-                </div>
-                <div class="form-group">
-                    <label>Số điện thoại *</label>
-                    <input type="tel" id="bookingPhone" required>
-                </div>
-                <div class="form-group">
-                    <label>Ngày đặt *</label>
-                    <input type="date" id="bookingDate" required>
-                </div>
-                <div class="form-group">
-                    <label>Giờ đặt *</label>
-                    <input type="time" id="bookingTime" required>
-                </div>
-                <div class="form-group">
-                    <label>Số người</label>
-                    <input type="number" id="bookingGuests" min="1" value="2" required>
-                </div>
-                <div class="form-group">
-                    <label>Ghi chú</label>
-                    <textarea id="bookingNote" rows="3" style="width: 100%; padding: 12px; border: 1px solid rgba(88, 101, 242, 0.3); border-radius: 10px; font-size: 14px; background: rgba(15, 23, 42, 0.5); color: #e2e8f0; font-family: inherit; resize: vertical;"></textarea>
-                </div>
-                <button type="submit" class="btn-submit">Xác nhận đặt chỗ</button>
-            </form>
+      </div>
+      <!-- REGISTER -->
+      <div id="af-reg" style="display:none;">
+        <div class="frow">
+          <div class="fg"><label class="fl">Họ và tên *</label><input class="fi" id="r-name" placeholder="Nguyễn Văn A"></div>
+          <div class="fg"><label class="fl">SĐT / Zalo *</label><input class="fi" id="r-phone" placeholder="0xxx xxx xxx"></div>
         </div>
+        <div class="fg"><label class="fl">Email *</label><input class="fi" id="r-email" type="email" placeholder="email@example.com"></div>
+        <div class="frow">
+          <div class="fg"><label class="fl">Mật khẩu *</label><input class="fi" id="r-pass" type="password" placeholder="••••••••"></div>
+          <div class="fg"><label class="fl">Xác nhận MK *</label><input class="fi" id="r-pass2" type="password" placeholder="••••••••"></div>
+        </div>
+        <div class="fg"><label class="fl">Khu vực hoạt động</label><input class="fi" id="r-area" placeholder="VD: TP.HCM, Hà Nội..."></div>
+        <button class="btn btn-g btn-full" onclick="doReg()">🚀 Đăng ký làm CTV</button>
+      </div>
     </div>
+  </div>
+</div>
 
+<!-- ══════════ CTV DASHBOARD ══════════ -->
+
+<div class="page" id="page-ctv">
+  <div class="dash">
+    <div class="sidebar">
+      <div class="sb-sect">
+        <div class="sb-lbl">CTV Menu</div>
+        <div class="sb-item ac-ctv" id="cs-dash" onclick="ctTab('dash')"><span class="sb-icon">📊</span>Dashboard</div>
+        <div class="sb-item" id="cs-posts" onclick="ctTab('posts')"><span class="sb-icon">📍</span>Địa điểm của tôi</div>
+        <div class="sb-item" id="cs-new" onclick="openPostM()"><span class="sb-icon">➕</span>Đăng mới</div>
+        <div class="sb-item" id="cs-profile" onclick="ctTab('profile')"><span class="sb-icon">👤</span>Hồ sơ CTV</div>
+      </div>
+      <div class="sb-sect">
+        <div class="sb-lbl">Khác</div>
+        <div class="sb-item" onclick="showHome()"><span class="sb-icon">🏠</span>Trang chủ</div>
+        <div class="sb-item" onclick="logout()"><span class="sb-icon">🚪</span>Đăng xuất</div>
+      </div>
+    </div>
+    <div class="main">
+      <div class="tab-c active" id="ct-dash">
+        <div class="ph"><h2>XIN CHÀO, <span id="ct-hello" style="color:var(--neon);">CTV</span> 🌙</h2><p>Quản lý địa điểm booking của bạn</p></div>
+        <div class="sg" id="ct-stats"></div>
+        <div class="card"><div class="card-hd"><div class="card-title">📋 Địa điểm gần đây</div></div><div class="card-bd" id="ct-recent"></div></div>
+      </div>
+      <div class="tab-c" id="ct-posts">
+        <div class="phr">
+          <div class="ph"><h2>📍 ĐỊA ĐIỂM CỦA TÔI</h2><p>Quản lý tất cả bài đăng</p></div>
+          <button class="btn btn-neon" onclick="openPostM()">➕ Đăng mới</button>
+        </div>
+        <div class="fb">
+          <button class="fb-btn act" onclick="fCTP('all',this)">Tất cả</button>
+          <button class="fb-btn" onclick="fCTP('pending',this)">⏳ Chờ duyệt</button>
+          <button class="fb-btn" onclick="fCTP('approved',this)">✅ Đã duyệt</button>
+          <button class="fb-btn" onclick="fCTP('rejected',this)">❌ Từ chối</button>
+        </div>
+        <div id="ct-posts-list"></div>
+      </div>
+      <div class="tab-c" id="ct-profile">
+        <div class="ph"><h2>👤 HỒ SƠ CTV</h2></div>
+        <div class="card" style="max-width:480px;"><div class="card-bd" id="ct-profile-bd"></div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ ADMIN DASHBOARD ══════════ -->
+
+<div class="page" id="page-admin">
+  <div class="dash">
+    <div class="sidebar">
+      <div class="sb-sect">
+        <div class="sb-lbl">Admin Panel</div>
+        <div class="sb-item ac-adm" id="as-dash" onclick="adTab('dash')"><span class="sb-icon">📊</span>Tổng quan</div>
+        <div class="sb-item" id="as-posts" onclick="adTab('posts')"><span class="sb-icon">📍</span>Quản lý bài</div>
+        <div class="sb-item" id="as-ctv" onclick="adTab('ctv')"><span class="sb-icon">👥</span>Quản lý CTV</div>
+        <div class="sb-item" id="as-logs" onclick="adTab('logs')"><span class="sb-icon">📋</span>Nhật ký</div>
+      </div>
+      <div class="sb-sect">
+        <div class="sb-lbl">Công cụ</div>
+        <div class="sb-item" onclick="exportCSV()"><span class="sb-icon">📤</span>Xuất CSV</div>
+        <div class="sb-item" onclick="doBackup()"><span class="sb-icon">💾</span>Backup DB</div>
+        <div class="sb-item" onclick="showHome()"><span class="sb-icon">🏠</span>Trang chủ</div>
+        <div class="sb-item" onclick="logout()"><span class="sb-icon">🚪</span>Đăng xuất</div>
+      </div>
+    </div>
+    <div class="main">
+      <div class="tab-c active" id="ad-dash">
+        <div class="adm-hero">
+          <div style="font-size:32px;">👑</div>
+          <div><div style="font-size:16px;font-weight:800;color:var(--gold);font-family:var(--head);letter-spacing:1px;">ADMIN · NIGHTVIBE</div><div style="font-size:12.5px;color:var(--dim);margin-top:3px;">Quản lý toàn bộ CTV & địa điểm Club · Bar · Pub</div></div>
+        </div>
+        <div class="sg" id="ad-stats"></div>
+        <div class="card">
+          <div class="card-hd"><div class="card-title">⏳ Chờ duyệt</div><button class="btn btn-y btn-sm" onclick="adTab('posts')">Xem tất cả →</button></div>
+          <div class="card-bd" id="ad-pending"></div>
+        </div>
+      </div>
+      <div class="tab-c" id="ad-posts">
+        <div class="ph"><h2>📍 QUẢN LÝ BÀI ĐĂNG</h2><p>Duyệt, từ chối, ẩn địa điểm</p></div>
+        <div class="fb">
+          <button class="fb-btn act" onclick="fAP('all',this)">Tất cả</button>
+          <button class="fb-btn" onclick="fAP('pending',this)">⏳ Chờ duyệt</button>
+          <button class="fb-btn" onclick="fAP('approved',this)">✅ Đã duyệt</button>
+          <button class="fb-btn" onclick="fAP('rejected',this)">❌ Từ chối</button>
+          <button class="fb-btn" onclick="fAP('hidden',this)">🚫 Ẩn</button>
+          <input class="srch" placeholder="🔍 Tìm địa điểm..." oninput="sAP(this.value)" style="max-width:200px;">
+        </div>
+        <div class="card"><div class="tw"><table>
+          <thead><tr><th>Tên địa điểm</th><th>CTV</th><th>Loại</th><th>Khu vực</th><th>Ưu đãi</th><th>Trạng thái</th><th>Ngày đăng</th><th>Thao tác</th></tr></thead>
+          <tbody id="ad-posts-tb"></tbody>
+        </table></div></div>
+      </div>
+      <div class="tab-c" id="ad-ctv">
+        <div class="ph"><h2>👥 QUẢN LÝ CTV</h2><p>Xem, khoá, xoá tài khoản CTV</p></div>
+        <div class="fb">
+          <button class="fb-btn act" onclick="fAC('all',this)">Tất cả</button>
+          <button class="fb-btn" onclick="fAC('active',this)">✅ Hoạt động</button>
+          <button class="fb-btn" onclick="fAC('locked',this)">🔒 Bị khoá</button>
+          <input class="srch" placeholder="🔍 Tìm CTV..." oninput="sAC(this.value)" style="max-width:200px;">
+        </div>
+        <div class="card"><div class="tw"><table>
+          <thead><tr><th>Tên CTV</th><th>SĐT / Zalo</th><th>Khu vực</th><th>Bài đăng</th><th>Đã duyệt</th><th>Trạng thái</th><th>Ngày tạo</th><th>Thao tác</th></tr></thead>
+          <tbody id="ad-ctv-tb"></tbody>
+        </table></div></div>
+      </div>
+      <div class="tab-c" id="ad-logs">
+        <div class="ph"><h2>📋 NHẬT KÝ HỆ THỐNG</h2></div>
+        <div class="card"><div class="tw"><table>
+          <thead><tr><th>Thời gian</th><th>Admin</th><th>Hành động</th><th>Mục tiêu</th></tr></thead>
+          <tbody id="ad-logs-tb"></tbody>
+        </table></div></div>
+      </div>
+    </div>
+  </div>
+</div>
 
 <script>
-    // Dữ liệu mẫu
-    const venues = [
-        {
-            id: 1, 
-            name: 'The Lighthouse Club', 
-            type: 'club', 
-            city: 'hanoi', 
-            address: 'Hoàn Kiếm, Hà Nội', 
-            rating: 4.5, 
-            price: '300.000đ - 1.000.000đ',
-            image: 'https://images.unsplash.com/photo-1566417713940-fe7c737a9ef2?w=500'
-        },
-        {
-            id: 2, 
-            name: 'Sky Bar Rooftop', 
-            type: 'club', 
-            city: 'hcm', 
-            address: 'Quận 1, TP.HCM', 
-            rating: 4.8, 
-            price: '500.000đ - 2.000.000đ',
-            image: 'https://images.unsplash.com/photo-1514933651103-005eec06c04b?w=500'
-        },
-        {
-            id: 3, 
-            name: 'Nhà hàng Hương Sen', 
-            type: 'restaurant', 
-            city: 'hanoi', 
-            address: 'Ba Đình, Hà Nội', 
-            rating: 4.3, 
-            price: '200.000đ - 800.000đ',
-            image: 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=500'
-        },
-        {
-            id: 4, 
-            name: 'Sushi Master', 
-            type: 'restaurant', 
-            city: 'hcm', 
-            address: 'Quận 3, TP.HCM', 
-            rating: 4.6, 
-            price: '300.000đ - 1.500.000đ',
-            image: 'https://images.unsplash.com/photo-1579027989536-b7b1f875659b?w=500'
-        },
-        {
-            id: 5, 
-            name: 'Diamond Club', 
-            type: 'club', 
-            city: 'danang', 
-            address: 'Sơn Trà, Đà Nẵng', 
-            rating: 4.7, 
-            price: '400.000đ - 1.500.000đ',
-            image: 'https://images.unsplash.com/photo-1571266028243-d220e4bbd2a3?w=500'
-        },
-        {
-            id: 6, 
-            name: 'Nhà hàng Biển Đông', 
-            type: 'restaurant', 
-            city: 'nhatrang', 
-            address: 'Trần Phú, Nha Trang', 
-            rating: 4.4, 
-            price: '250.000đ - 1.000.000đ',
-            image: 'https://images.unsplash.com/photo-1552566626-52f8b828add9?w=500'
-        },
-    ];
+// ═══ DB ═══
+const DB={
+  get(k){try{return JSON.parse(localStorage.getItem('nv_'+k)||'null');}catch{return null;}},
+  set(k,v){localStorage.setItem('nv_'+k,JSON.stringify(v));},
+  init(){
+    if(!this.get('users'))this.set('users',[
+      {id:1,name:'Admin NightVibe',email:'admin@nv.vn',pw:'admin123',phone:'0901000000',role:'admin',status:'active',area:'TP.HCM',created:dago(-30)},
+      {id:2,name:'Trần Minh Khoa',email:'ctv1@nv.vn',pw:'ctv123',phone:'0912888999',role:'ctv',status:'active',area:'TP.HCM',created:dago(-20)},
+      {id:3,name:'Nguyễn Thảo Linh',email:'ctv2@nv.vn',pw:'ctv123',phone:'0987666555',role:'ctv',status:'active',area:'TP.HCM & HN',created:dago(-15)},
+      {id:4,name:'Lê Hoàng Phi',email:'ctv3@nv.vn',pw:'ctv123',phone:'0978123456',role:'ctv',status:'locked',area:'Hà Nội',created:dago(-10)},
+    ]);
+    if(!this.get('posts'))this.set('posts',[
+      {id:1,uid:2,name:'Club Zouk Saigon',cat:'Club',addr:'52 Đường 3/2, Q.10, TP.HCM',desc:'Club nhạc Latin & House sôi động nhất Sài Gòn. DJ quốc tế biểu diễn mỗi cuối tuần. Book qua CTV được miễn cover charge và ưu tiên vào cửa không cần xếp hàng.',price:300000,phone:'0912888999',hours:'22:00 – 04:00',dress:'Smart Casual',tags:'Live DJ,VIP Table,Latin Night,Free Flow',deal:'Miễn cover charge + ưu tiên vào cửa',icon:'🎵',hot:1,status:'approved',created:dago(-6),rejR:''},
+      {id:2,uid:2,name:'The Rooftop Lounge',cat:'Lounge',addr:'Tầng 26, 29 Lê Duẩn, Q.1, TP.HCM',desc:'Sky bar view toàn cảnh Sài Gòn về đêm. Cocktail thủ công premium, wine list nhập khẩu. Atmosphere sang trọng, phù hợp tiếp khách & hẹn hò.',price:200000,phone:'0912888999',hours:'18:00 – 02:00',dress:'Smart Elegant',tags:'Rooftop,City View,Live Acoustic,Premium Cocktail',deal:'Tặng 1 cocktail welcome khi book qua CTV',icon:'🌙',hot:1,status:'approved',created:dago(-5),rejR:''},
+      {id:3,uid:3,name:'Bui Vien Walking Street Pub',cat:'Pub',addr:'Bùi Viện, Q.1, TP.HCM',desc:'Pub sôi động nhất phố Tây Bùi Viện. Bia nhập khẩu đa dạng, live band mỗi tối. Không gian mở, phù hợp nhóm đông.',price:50000,phone:'0987666555',hours:'17:00 – 03:00',dress:'Casual',tags:'Live Band,Beer Tower,Open Air,Party Zone',deal:'Giảm 20% hóa đơn khi book bàn qua CTV',icon:'🍺',hot:0,status:'approved',created:dago(-4),rejR:''},
+      {id:4,uid:3,name:'Indochine Bar & Bistro',cat:'Bar',addr:'97 Hai Bà Trưng, Q.1, TP.HCM',desc:'Bar phong cách Đông Dương hoài cổ. Signature cocktail lấy cảm hứng từ văn hoá Việt. Không gian thơ mộng, phù hợp couple & nhóm nhỏ.',price:120000,phone:'0987666555',hours:'17:00 – 01:00',dress:'Smart Casual',tags:'Craft Cocktail,Indochine Theme,Chill Vibe,Couple Friendly',deal:'Tặng snack set khi đặt bàn từ 4 người',icon:'🍸',hot:0,status:'approved',created:dago(-3),rejR:''},
+      {id:5,uid:2,name:'Underground Club District 3',cat:'Club',addr:'Tầng hầm, 68 Võ Văn Tần, Q.3, TP.HCM',desc:'Underground club EDM lớn nhất khu vực. Hệ thống âm thanh & ánh sáng đỉnh cao. Host resident DJ set hàng tuần, guest DJ quốc tế định kỳ.',price:250000,phone:'0912888999',hours:'23:00 – 06:00',dress:'Casual / Party',tags:'EDM,Underground,Laser Show,International DJ',deal:'Giảm 50% cover charge trước 24:00',icon:'🔥',hot:1,status:'pending',created:dago(-2),rejR:''},
+      {id:6,uid:4,name:'Hanoi Jazz Club',cat:'Bar',addr:'31 Lương Văn Can, Hoàn Kiếm, Hà Nội',desc:'Jazz bar nhỏ ấm cúng tại trung tâm Hà Nội. Live jazz mỗi tối từ 20h.',price:80000,phone:'0978123456',hours:'19:00 – 01:00',dress:'Smart Casual',tags:'Live Jazz,Acoustic,Wine,Intimate',deal:'Tặng 1 ly wine khi book bàn',icon:'🎶',hot:0,status:'rejected',created:dago(-3),rejR:'Bài đăng thiếu thông tin về giá menu, ảnh đại diện và ưu đãi booking chưa cụ thể.'},
+    ]);
+    if(!this.get('logs'))this.set('logs',[]);
+    if(!this.get('sess'))this.set('sess',null);
+  }
+};
 
-    let currentCategory = 'all';
-    let users = JSON.parse(localStorage.getItem('users') || '[]');
-    let currentUser = JSON.parse(localStorage.getItem('currentUser') || 'null');
+function dago(d){const dt=new Date();dt.setDate(dt.getDate()+d);return dt.toISOString();}
+function fmt(iso){if(!iso)return'—';return new Date(iso).toLocaleDateString('vi-VN',{day:'2-digit',month:'2-digit',year:'numeric'});}
+function fmtM(n){if(!n||n==0)return'Min charge';if(n>=1000000)return(n/1000000).toFixed(1).replace('.0','')+'tr';if(n>=1000)return(n/1000).toFixed(0)+'k';return n.toLocaleString()+'đ';}
 
-    // Khởi tạo
-    function init() {
-        displayVenues(venues);
-        checkLogin();
+function catBgClass(c){return{Club:'bg-club',Bar:'bg-bar',Pub:'bg-pub',Lounge:'bg-lounge'}[c]||'bg-club';}
+function catBadgeClass(c){return{Club:'bc-club',Bar:'bc-bar',Pub:'bc-pub',Lounge:'bc-lounge'}[c]||'bc-club';}
+
+// ═══ SESSION ═══
+let ME=null;
+function getSess(){const s=DB.get('sess');if(s){ME=(DB.get('users')||[]).find(u=>u.id===s.uid)||null;}}
+function setSess(u){ME=u;DB.set('sess',{uid:u.id});}
+function clrSess(){ME=null;DB.set('sess',null);}
+
+// ═══ TOAST ═══
+function toast(msg,t='inf'){
+  const c=document.getElementById('toast');
+  const el=document.createElement('div');el.className='ti t'+t;el.textContent=msg;c.appendChild(el);
+  setTimeout(()=>el.remove(),3200);
+}
+
+// ═══ MODAL ═══
+function openM(id){document.getElementById(id).classList.add('open');}
+function closeM(id){document.getElementById(id).classList.remove('open');}
+function conf(title,msg,cb){
+  document.getElementById('mc-t').textContent=title;
+  document.getElementById('mc-m').textContent=msg;
+  document.getElementById('mc-ok').onclick=()=>{cb();closeM('mconf');};
+  openM('mconf');
+}
+document.querySelectorAll('.mover').forEach(el=>el.addEventListener('click',e=>{if(e.target===el)el.classList.remove('open');}));
+
+// ═══ PAGES ═══
+function showPage(n){document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));document.getElementById('page-'+n).classList.add('active');updNav();window.scrollTo(0,0);}
+function showHome(){showPage('home');renderHome();}
+function goDash(){ME?.role==='admin'?(showPage('admin'),renderAdmin()):(showPage('ctv'),renderCTV());}
+function scrollV(){document.getElementById('sec-venues').scrollIntoView({behavior:'smooth'});}
+
+function updNav(){
+  const g=document.getElementById('nav-guest'),l=document.getElementById('nav-logged');
+  if(ME){
+    g.style.display='none';l.style.display='flex';
+    document.getElementById('nav-name').textContent=ME.name;
+    document.getElementById('nav-role').textContent=ME.role==='admin'?'// ADMIN':'// CTV · '+ME.area;
+    const av=document.getElementById('nav-av');
+    av.textContent=ME.name.charAt(0).toUpperCase();
+    av.className='nav-av '+(ME.role==='admin'?'av-a':'av-c');
+  }else{g.style.display='flex';l.style.display='none';}
+}
+
+// ═══ AUTH ═══
+function authTab(t){
+  document.getElementById('af-login').style.display=t==='login'?'block':'none';
+  document.getElementById('af-reg').style.display=t==='reg'?'block':'none';
+  document.getElementById('at-login').classList.toggle('act',t==='login');
+  document.getElementById('at-reg').classList.toggle('act',t==='reg');
+}
+function doLogin(){
+  const email=document.getElementById('l-email').value.trim();
+  const pass=document.getElementById('l-pass').value;
+  if(!email||!pass){toast('Nhập đầy đủ thông tin','err');return;}
+  const u=(DB.get('users')||[]).find(u=>u.email===email&&u.pw===pass);
+  if(!u){toast('Sai email hoặc mật khẩu','err');return;}
+  if(u.status==='locked'){toast('Tài khoản bị khoá, liên hệ admin','err');return;}
+  setSess(u);toast('Chào '+u.name+' 🌙','ok');
+  u.role==='admin'?(showPage('admin'),renderAdmin()):(showPage('ctv'),renderCTV());
+}
+function ql(e,p){document.getElementById('l-email').value=e;document.getElementById('l-pass').value=p;doLogin();}
+function doReg(){
+  const name=document.getElementById('r-name').value.trim();
+  const phone=document.getElementById('r-phone').value.trim();
+  const email=document.getElementById('r-email').value.trim();
+  const pass=document.getElementById('r-pass').value;
+  const pass2=document.getElementById('r-pass2').value;
+  const area=document.getElementById('r-area').value.trim();
+  if(!name||!phone||!email||!pass){toast('Điền đầy đủ thông tin bắt buộc','err');return;}
+  if(pass!==pass2){toast('Mật khẩu không khớp','err');return;}
+  if(pass.length<6){toast('Mật khẩu ít nhất 6 ký tự','err');return;}
+  const users=DB.get('users')||[];
+  if(users.find(u=>u.email===email)){toast('Email đã tồn tại','err');return;}
+  const nu={id:Date.now(),name,phone,email,pw:pass,role:'ctv',status:'active',area:area||'Chưa cập nhật',created:new Date().toISOString()};
+  users.push(nu);DB.set('users',users);setSess(nu);
+  toast('Đăng ký thành công! Chào '+name+' 🔥','ok');
+  showPage('ctv');renderCTV();
+}
+function logout(){clrSess();showPage('home');renderHome();toast('Đã đăng xuất 🌙','inf');}
+
+// ═══ HOME ═══
+let hF='all';
+function renderHome(){
+  const posts=(DB.get('posts')||[]).filter(p=>p.status==='approved');
+  const shown=hF==='all'?posts:posts.filter(p=>p.cat===hF);
+  shown.sort((a,b)=>b.hot-a.hot||new Date(b.created)-new Date(a.created));
+  const users=DB.get('users')||[];
+  const g=document.getElementById('home-grid');
+  if(!shown.length){g.innerHTML='<div class="empty" style="grid-column:1/-1;"><div class="empty-ico">🌙</div><p>Chưa có địa điểm nào được duyệt</p></div>';return;}
+  g.innerHTML=shown.map(p=>{
+    const ctv=users.find(u=>u.id===p.uid)||{name:'CTV'};
+    const tags=(p.tags||'').split(',').slice(0,3).map(t=>`<span class="vtag">${t.trim()}</span>`).join('');
+    return`<div class="vcard" onclick="viewV(${p.id})">
+      <div class="vthumb">
+        <div class="vthumb-bg ${catBgClass(p.cat)}"></div>
+        <div class="vthumb-ico">${p.icon||'🎵'}</div>
+        <div class="vcat-badge ${catBadgeClass(p.cat)}">${p.cat}</div>
+        ${p.hot?'<div class="vhotbadge">🔥 HOT</div>':''}
+        <div class="vctv-strip">
+          <div class="ctv-mini-av">${ctv.name.charAt(0)}</div>
+          <span>CTV: ${ctv.name}</span>
+          <span style="margin-left:auto;font-size:11px;">⏰ ${p.hours||'—'}</span>
+        </div>
+      </div>
+      <div class="vbody">
+        <div class="vname">${p.name}</div>
+        <div class="vloc">📍 ${p.addr.split(',').slice(-2).join(',').trim()}</div>
+        <div class="vtags">${tags}</div>
+        ${p.deal?`<div style="font-size:12px;color:var(--g);margin-bottom:10px;display:flex;align-items:center;gap:5px;">✦ ${p.deal}</div>`:''}
+        <div class="vfooter">
+          <div class="vprice">Từ ${fmtM(p.price)}</div>
+          <div class="vhours">${p.dress||'Casual'}</div>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+function fHome(cat,btn){hF=cat;document.querySelectorAll('#home-catbar .cpill').forEach(b=>b.classList.remove('act'));btn.classList.add('act');renderHome();}
+
+function viewV(id){
+  const p=(DB.get('posts')||[]).find(x=>x.id===id);if(!p)return;
+  const ctv=(DB.get('users')||[]).find(u=>u.id===p.uid)||{name:'CTV',phone:'—'};
+  const tags=(p.tags||'').split(',').map(t=>`<span class="vtag">${t.trim()}</span>`).join('');
+  document.getElementById('mview-bd').innerHTML=`
+    <div class="vm-hero ${catBgClass(p.cat)}">${p.icon||'🎵'}</div>
+    <div class="vm-name">${p.name} ${p.hot?'🔥':''}</div>
+    <div class="vm-tags"><span class="vtag" style="background:rgba(255,45,120,.12);color:var(--neon);border-color:rgba(255,45,120,.2);">${p.cat}</span>${tags}</div>
+    <div class="vm-desc">${p.desc}</div>
+    ${p.deal?`<div style="background:rgba(6,214,160,.06);border:1px solid rgba(6,214,160,.2);border-radius:10px;padding:12px 14px;margin-bottom:16px;font-size:13px;color:var(--g);"><strong>✦ Ưu đãi khi book qua CTV:</strong> ${p.deal}</div>`:''}
+    <div class="vm-info">
+      <div class="vm-row"><span class="vm-lbl">📍 Địa chỉ</span><strong>${p.addr}</strong></div>
+      <div class="vm-row"><span class="vm-lbl">⏰ Giờ mở cửa</span><strong>${p.hours||'—'}</strong></div>
+      <div class="vm-row"><span class="vm-lbl">👔 Dress code</span><strong>${p.dress||'—'}</strong></div>
+      <div class="vm-row"><span class="vm-lbl">💰 Giá vào cửa</span><strong style="color:var(--gold);">Từ ${fmtM(p.price)}</strong></div>
+      <div class="vm-row"><span class="vm-lbl">✦ CTV phụ trách</span><strong style="color:var(--neon);">${ctv.name}</strong></div>
+    </div>
+    <div class="vm-cta">
+      <button class="cta-z" onclick="window.open('https://zalo.me/${p.phone}','_blank')">💬 Zalo: ${p.phone}</button>
+      <button class="cta-c" onclick="window.open('tel:${p.phone}')">📞 Gọi ngay</button>
+    </div>`;
+  openM('mview');
+}
+
+// ═══ CTV ═══
+function renderCTV(){
+  if(!ME)return;
+  document.getElementById('ct-hello').textContent=ME.name;
+  renderCTStats();renderCTRecent();renderCTPosts('all');renderCTProfile();
+}
+function ctTab(t){
+  ['dash','posts','profile'].forEach(k=>{
+    document.getElementById('ct-'+k).classList.toggle('active',k===t);
+    const el=document.getElementById('cs-'+k);
+    if(el){el.classList.remove('ac-ctv');if(k===t)el.classList.add('ac-ctv');}
+  });
+}
+function renderCTStats(){
+  const posts=(DB.get('posts')||[]).filter(p=>p.uid===ME.id);
+  document.getElementById('ct-stats').innerHTML=[
+    {i:'📍',n:posts.length,l:'Tổng địa điểm',c:'var(--neon)'},
+    {i:'⏳',n:posts.filter(p=>p.status==='pending').length,l:'Chờ duyệt',c:'var(--gold)'},
+    {i:'✅',n:posts.filter(p=>p.status==='approved').length,l:'Đã duyệt',c:'var(--g)'},
+    {i:'❌',n:posts.filter(p=>p.status==='rejected').length,l:'Từ chối',c:'var(--r)'},
+  ].map(x=>`<div class="sc"><div class="sc-ico">${x.i}</div><div class="sc-num" style="color:${x.c};">${x.n}</div><div class="sc-lbl">${x.l}</div></div>`).join('');
+}
+function renderCTRecent(){
+  const posts=(DB.get('posts')||[]).filter(p=>p.uid===ME.id).sort((a,b)=>new Date(b.created)-new Date(a.created)).slice(0,4);
+  const c=document.getElementById('ct-recent');
+  if(!posts.length){c.innerHTML='<div class="empty"><div class="empty-ico">📭</div><p>Chưa có địa điểm nào. <button class="btn btn-neon btn-sm" onclick="openPostM()">Đăng ngay</button></p></div>';return;}
+  c.innerHTML=posts.map(p=>mpostHTML(p)).join('');
+}
+let ctpF='all';
+function renderCTPosts(f){
+  ctpF=f;
+  const all=(DB.get('posts')||[]).filter(p=>p.uid===ME.id);
+  const posts=f==='all'?all:all.filter(p=>p.status===f);
+  posts.sort((a,b)=>new Date(b.created)-new Date(a.created));
+  const c=document.getElementById('ct-posts-list');
+  if(!posts.length){c.innerHTML='<div class="empty"><div class="empty-ico">📭</div><p>Không có bài nào</p></div>';return;}
+  c.innerHTML=posts.map(p=>mpostHTML(p)).join('');
+}
+function fCTP(f,btn){document.querySelectorAll('#ct-posts .fb-btn').forEach(b=>b.classList.remove('act'));btn.classList.add('act');renderCTPosts(f);}
+
+function mpostHTML(p){
+  const bc=p.status==='pending'?'b-pend':p.status==='approved'?'b-appr':p.status==='hidden'?'b-hid':'b-rej';
+  const bl=p.status==='pending'?'Chờ duyệt':p.status==='approved'?'Đã duyệt':p.status==='hidden'?'Ẩn':'Từ chối';
+  const canEdit=p.status==='pending'||p.status==='rejected';
+  return`<div class="mpost">
+    <div class="mpost-thumb ${catBgClass(p.cat)}" style="min-width:58px;">${p.icon||'🎵'}</div>
+    <div class="mpost-info">
+      <div class="mpost-name">${p.name} ${p.hot?'🔥':''}</div>
+      <div class="mpost-meta">${p.cat} · ${p.addr.split(',').slice(-2).join(',').trim()} · ${fmtM(p.price)} · ${fmt(p.created)}</div>
+      ${p.deal?`<div style="font-size:11.5px;color:var(--g);margin-top:3px;">✦ ${p.deal}</div>`:''}
+      ${p.status==='rejected'&&p.rejR?`<div class="rbox">💬 Lý do: ${p.rejR}</div>`:''}
+    </div>
+    <div class="mpost-acts">
+      <span class="badge ${bc}">${bl}</span>
+      ${canEdit?`<button class="btn btn-ghost btn-sm" onclick="openEditM(${p.id})">✏️</button>`:''}
+      <button class="btn btn-ghost btn-sm" onclick="delMyPost(${p.id})" style="color:var(--r);">🗑️</button>
+    </div>
+  </div>`;
+}
+function renderCTProfile(){
+  const c=document.getElementById('ct-profile-bd');if(!ME)return;
+  const posts=(DB.get('posts')||[]).filter(p=>p.uid===ME.id);
+  const appr=posts.filter(p=>p.status==='approved').length;
+  c.innerHTML=`
+    <div style="text-align:center;margin-bottom:22px;">
+      <div style="width:72px;height:72px;border-radius:18px;background:linear-gradient(135deg,var(--neon),var(--purple));display:flex;align-items:center;justify-content:center;font-size:32px;font-weight:900;color:white;margin:0 auto 12px;">${ME.name.charAt(0)}</div>
+      <div style="font-size:18px;font-weight:800;font-family:var(--head);letter-spacing:1px;">${ME.name}</div>
+      <div style="font-size:12px;color:var(--dim);margin-top:3px;font-family:var(--mono);">CTV · ${ME.email}</div>
+    </div>
+    ${[['📍 Khu vực',ME.area||'—'],['📱 SĐT / Zalo',ME.phone||'—'],['📅 Tham gia',fmt(ME.created)],['📍 Tổng bài đăng',posts.length+' địa điểm'],['✅ Đã được duyệt',appr+' địa điểm']].map(([l,v],i,a)=>`
+    <div style="display:flex;justify-content:space-between;padding:11px 0;${i<a.length-1?'border-bottom:1px solid var(--border);':''}">
+      <span style="color:var(--dim);">${l}</span><strong>${v}</strong>
+    </div>`).join('')}`;
+}
+
+// ═══ POST MODAL ═══
+function openPostM(eid=null){
+  document.getElementById('mpost-title').textContent=eid?'✏️ Chỉnh sửa địa điểm':'🎵 Đăng địa điểm mới';
+  document.getElementById('f-eid').value=eid||'';
+  const ids=['f-name','f-addr','f-desc','f-price','f-phone','f-hours','f-dress','f-tags','f-deal'];
+  if(eid){
+    const p=(DB.get('posts')||[]).find(x=>x.id===eid);
+    if(p){
+      document.getElementById('f-name').value=p.name;
+      document.getElementById('f-addr').value=p.addr;
+      document.getElementById('f-desc').value=p.desc;
+      document.getElementById('f-price').value=p.price||'';
+      document.getElementById('f-phone').value=p.phone||'';
+      document.getElementById('f-hours').value=p.hours||'';
+      document.getElementById('f-dress').value=p.dress||'';
+      document.getElementById('f-tags').value=p.tags||'';
+      document.getElementById('f-deal').value=p.deal||'';
+      document.getElementById('f-cat').value=p.cat;
+      document.getElementById('f-icon').value=p.icon||'🎵';
+      document.getElementById('f-hot').value=p.hot?'1':'0';
     }
+  } else {
+    ids.forEach(id=>document.getElementById(id).value='');
+    document.getElementById('f-cat').value='Club';
+    document.getElementById('f-icon').value='🎵';
+    document.getElementById('f-hot').value='0';
+  }
+  document.getElementById('mpost-btn').textContent=eid?'💾 Lưu thay đổi':'📤 Đăng bài';
+  document.getElementById('mpost-btn').onclick=submitPost;
+  openM('mpost');
+}
+function openEditM(id){openPostM(id);}
+function submitPost(){
+  const name=document.getElementById('f-name').value.trim();
+  const addr=document.getElementById('f-addr').value.trim();
+  const desc=document.getElementById('f-desc').value.trim();
+  const phone=document.getElementById('f-phone').value.trim();
+  const eid=document.getElementById('f-eid').value;
+  if(!name||!addr||!desc||!phone){toast('Vui lòng nhập đủ thông tin bắt buộc (*)','err');return;}
+  const posts=DB.get('posts')||[];
+  const data={
+    name,addr,desc,phone,
+    cat:document.getElementById('f-cat').value,
+    price:parseFloat(document.getElementById('f-price').value)||0,
+    hours:document.getElementById('f-hours').value.trim(),
+    dress:document.getElementById('f-dress').value.trim(),
+    tags:document.getElementById('f-tags').value.trim(),
+    deal:document.getElementById('f-deal').value.trim(),
+    icon:document.getElementById('f-icon').value,
+    hot:parseInt(document.getElementById('f-hot').value)||0,
+  };
+  if(eid){
+    const idx=posts.findIndex(p=>p.id==eid);
+    if(idx>-1)posts[idx]={...posts[idx],...data,status:'pending',rejR:''};
+    toast('Đã cập nhật! Chờ admin duyệt lại.','inf');
+  } else {
+    posts.push({id:Date.now(),uid:ME.id,...data,status:'pending',created:new Date().toISOString(),rejR:''});
+    toast('Đã đăng! Admin sẽ duyệt sớm 🔥','ok');
+  }
+  DB.set('posts',posts);closeM('mpost');renderCTV();
+}
+function delMyPost(id){
+  conf('Xoá địa điểm','Xoá địa điểm này? Không thể hoàn tác.',()=>{
+    DB.set('posts',(DB.get('posts')||[]).filter(p=>p.id!==id));
+    toast('Đã xoá','inf');renderCTV();
+  });
+}
 
-    function checkLogin() {
-        if (currentUser) {
-            document.getElementById('authButtons').style.display = 'none';
-            document.getElementById('userInfo').style.display = 'flex';
-            document.getElementById('userName').textContent = `Xin chào, ${currentUser.name}`;
-        }
-    }
+// ═══ ADMIN ═══
+function renderAdmin(){renderAStats();renderAPending();renderAPosts('all','');renderACTV('all','');renderALogs();}
+function adTab(t){
+  ['dash','posts','ctv','logs'].forEach(k=>{
+    document.getElementById('ad-'+k).classList.toggle('active',k===t);
+    const el=document.getElementById('as-'+k);
+    if(el){el.classList.remove('ac-adm');if(k===t)el.classList.add('ac-adm');}
+  });
+}
+function renderAStats(){
+  const posts=DB.get('posts')||[];
+  const ctv=(DB.get('users')||[]).filter(u=>u.role==='ctv');
+  document.getElementById('ad-stats').innerHTML=[
+    {i:'👥',n:ctv.length,l:'Tổng CTV',c:'var(--neon)'},
+    {i:'📍',n:posts.length,l:'Tổng địa điểm',c:'var(--purple)'},
+    {i:'⏳',n:posts.filter(p=>p.status==='pending').length,l:'Chờ duyệt',c:'var(--gold)'},
+    {i:'✅',n:posts.filter(p=>p.status==='approved').length,l:'Đã duyệt',c:'var(--g)'},
+  ].map(x=>`<div class="sc"><div class="sc-ico">${x.i}</div><div class="sc-num" style="color:${x.c};">${x.n}</div><div class="sc-lbl">${x.l}</div></div>`).join('');
+}
+function renderAPending(){
+  const posts=(DB.get('posts')||[]).filter(p=>p.status==='pending').slice(0,5);
+  const users=DB.get('users')||[];
+  const c=document.getElementById('ad-pending');
+  if(!posts.length){c.innerHTML='<div class="empty"><div class="empty-ico">🎉</div><p>Không có bài chờ duyệt!</p></div>';return;}
+  c.innerHTML=posts.map(p=>{
+    const ctv=users.find(u=>u.id===p.uid)||{name:'CTV'};
+    return`<div class="mpost">
+      <div class="mpost-thumb ${catBgClass(p.cat)}" style="min-width:58px;">${p.icon||'🎵'}</div>
+      <div class="mpost-info">
+        <div class="mpost-name">${p.name} ${p.hot?'🔥':''}</div>
+        <div class="mpost-meta">${p.cat} · CTV: ${ctv.name} · ${fmt(p.created)}</div>
+        ${p.deal?`<div style="font-size:11.5px;color:var(--g);margin-top:3px;">✦ ${p.deal}</div>`:''}
+      </div>
+      <div class="mpost-acts">
+        <button class="btn btn-g btn-sm" onclick="approveP(${p.id})">✅ Duyệt</button>
+        <button class="btn btn-r btn-sm" onclick="openRej(${p.id})">❌ Từ chối</button>
+        <button class="btn btn-ghost btn-sm" onclick="viewV(${p.id})">👁️</button>
+      </div>
+    </div>`;
+  }).join('');
+}
 
-    function displayVenues(venuesToShow) {
-        const grid = document.getElementById('venuesGrid');
-        grid.innerHTML = venuesToShow.map(venue => `
-            <div class="venue-card">
-                <div class="venue-image" style="background-image: url('${venue.image}')">
-                    <span>${venue.type === 'club' ? '🎵' : '🍽️'}</span>
-                </div>
-                <div class="venue-info">
-                    <h3>${venue.name}</h3>
-                    <p>📍 ${venue.address}</p>
-                    <p>💰 ${venue.price}</p>
-                    <div class="venue-rating">⭐ ${venue.rating}/5</div>
-                    <button class="btn-book" onclick="bookVenue(${venue.id})">Đặt chỗ ngay</button>
-                </div>
-            </div>
-        `).join('');
-    }
+let apF='all',apS='',acF='all',acS='';
+function renderAPosts(f,s){
+  if(f!==undefined)apF=f;if(s!==undefined)apS=s;
+  let posts=DB.get('posts')||[];const users=DB.get('users')||[];
+  if(apF!=='all')posts=posts.filter(p=>p.status===apF);
+  if(apS)posts=posts.filter(p=>p.name.toLowerCase().includes(apS.toLowerCase()));
+  posts.sort((a,b)=>new Date(b.created)-new Date(a.created));
+  const tb=document.getElementById('ad-posts-tb');
+  tb.innerHTML=posts.map(p=>{
+    const ctv=users.find(u=>u.id===p.uid)||{name:'?'};
+    const bc=p.status==='pending'?'b-pend':p.status==='approved'?'b-appr':p.status==='hidden'?'b-hid':'b-rej';
+    const bl=p.status==='pending'?'Chờ duyệt':p.status==='approved'?'Đã duyệt':p.status==='hidden'?'Ẩn':'Từ chối';
+    return`<tr>
+      <td><div class="td-name">${p.icon} ${p.name}${p.hot?' 🔥':''}</div></td>
+      <td style="font-size:12.5px;">${ctv.name}</td>
+      <td><span style="padding:3px 9px;border-radius:5px;font-size:11px;font-weight:700;" class="${catBadgeClass(p.cat)}">${p.cat}</span></td>
+      <td style="font-size:12px;color:var(--dim);">${p.addr.split(',').slice(-2).join(',').trim()}</td>
+      <td style="font-size:11.5px;color:var(--g);max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${p.deal||'—'}</td>
+      <td><span class="badge ${bc}">${bl}</span></td>
+      <td style="font-size:12px;color:var(--dim);">${fmt(p.created)}</td>
+      <td><div class="td-acts">
+        ${p.status==='pending'?`<button class="btn btn-g btn-sm" onclick="approveP(${p.id})">✅</button><button class="btn btn-r btn-sm" onclick="openRej(${p.id})">❌</button>`:''}
+        ${p.status==='approved'?`<button class="btn btn-y btn-sm" onclick="hideP(${p.id})">🚫</button>`:''}
+        ${p.status==='hidden'?`<button class="btn btn-g btn-sm" onclick="approveP(${p.id})">↩️</button>`:''}
+        <button class="btn btn-ghost btn-sm" onclick="viewV(${p.id})">👁️</button>
+        <button class="btn btn-ghost btn-sm" onclick="adEditP(${p.id})">✏️</button>
+        <button class="btn btn-ghost btn-sm" onclick="adDelP(${p.id})" style="color:var(--r);">🗑️</button>
+      </div></td>
+    </tr>`;
+  }).join('');
+  if(!posts.length)tb.innerHTML=`<tr><td colspan="8" style="text-align:center;padding:40px;color:var(--muted);">Không có địa điểm nào</td></tr>`;
+}
+function fAP(f,btn){document.querySelectorAll('#ad-posts .fb-btn').forEach(b=>b.classList.remove('act'));btn.classList.add('act');renderAPosts(f,apS);}
+function sAP(v){renderAPosts(apF,v);}
 
-    function filterCategory(category) {
-        currentCategory = category;
-        document.querySelectorAll('.category-btn').forEach(btn => btn.classList.remove('active'));
-        event.target.classList.add('active');
-        
-        const filtered = category === 'all' ? venues : venues.filter(v => v.type === category);
-        displayVenues(filtered);
-    }
+function renderACTV(f,s){
+  if(f!==undefined)acF=f;if(s!==undefined)acS=s;
+  let users=(DB.get('users')||[]).filter(u=>u.role==='ctv');
+  const posts=DB.get('posts')||[];
+  if(acF!=='all')users=users.filter(u=>u.status===acF);
+  if(acS)users=users.filter(u=>u.name.toLowerCase().includes(acS.toLowerCase())||u.email.toLowerCase().includes(acS.toLowerCase()));
+  const tb=document.getElementById('ad-ctv-tb');
+  tb.innerHTML=users.map(u=>{
+    const all=posts.filter(p=>p.uid===u.id).length;
+    const appr=posts.filter(p=>p.uid===u.id&&p.status==='approved').length;
+    return`<tr>
+      <td><strong>${u.name}</strong><div style="font-size:11px;color:var(--dim);">${u.email}</div></td>
+      <td style="font-family:var(--mono);font-size:12px;">${u.phone||'—'}</td>
+      <td>${u.area||'—'}</td>
+      <td style="text-align:center;font-family:var(--mono);">${all}</td>
+      <td style="text-align:center;font-family:var(--mono);color:var(--g);">${appr}</td>
+      <td><span class="badge ${u.status==='active'?'b-act':'b-lock'}">${u.status==='active'?'Hoạt động':'Bị khoá'}</span></td>
+      <td style="font-size:12px;color:var(--dim);">${fmt(u.created)}</td>
+      <td><div class="td-acts">
+        <button class="btn btn-sm ${u.status==='active'?'btn-y':'btn-g'}" onclick="toggleLock(${u.id})">${u.status==='active'?'🔒 Khoá':'🔓 Mở'}</button>
+        <button class="btn btn-r btn-sm" onclick="delUser(${u.id})">🗑️</button>
+      </div></td>
+    </tr>`;
+  }).join('');
+  if(!users.length)tb.innerHTML=`<tr><td colspan="8" style="text-align:center;padding:40px;color:var(--muted);">Không có CTV nào</td></tr>`;
+}
+function fAC(f,btn){document.querySelectorAll('#ad-ctv .fb-btn').forEach(b=>b.classList.remove('act'));btn.classList.add('act');renderACTV(f,acS);}
+function sAC(v){renderACTV(acF,v);}
 
-    function searchVenues() {
-        const searchText = document.getElementById('searchInput').value.toLowerCase();
-        const city = document.getElementById('citySelect').value;
-        
-        let filtered = venues;
-        
-        if (currentCategory !== 'all') {
-            filtered = filtered.filter(v => v.type === currentCategory);
-        }
-        
-        if (searchText) {
-            filtered = filtered.filter(v => v.name.toLowerCase().includes(searchText));
-        }
-        
-        if (city) {
-            filtered = filtered.filter(v => v.city === city);
-        }
-        
-        displayVenues(filtered);
-    }
+function renderALogs(){
+  const logs=(DB.get('logs')||[]).slice().reverse().slice(0,50);
+  const tb=document.getElementById('ad-logs-tb');
+  if(!logs.length){tb.innerHTML=`<tr><td colspan="4" style="text-align:center;padding:40px;color:var(--muted);">Chưa có nhật ký</td></tr>`;return;}
+  tb.innerHTML=logs.map(l=>`<tr>
+    <td style="font-family:var(--mono);font-size:11.5px;color:var(--dim);white-space:nowrap;">${fmt(l.t)} ${new Date(l.t).toLocaleTimeString('vi-VN',{hour:'2-digit',minute:'2-digit'})}</td>
+    <td style="font-weight:600;">${l.admin}</td>
+    <td>${l.action}</td>
+    <td style="color:var(--dim);font-size:12.5px;">${l.target}</td>
+  </tr>`).join('');
+}
+function addLog(action,target){
+  const logs=DB.get('logs')||[];
+  logs.push({admin:ME?.name||'Admin',action,target,t:new Date().toISOString()});
+  DB.set('logs',logs);
+}
 
-    function openModal(modalId) {
-        document.getElementById(modalId).style.display = 'block';
-    }
+// ═══ ADMIN ACTIONS ═══
+function approveP(id){
+  const posts=DB.get('posts')||[];
+  const idx=posts.findIndex(p=>p.id===id);
+  if(idx>-1){posts[idx].status='approved';posts[idx].rejR='';}
+  DB.set('posts',posts);addLog('✅ Duyệt địa điểm',posts[idx]?.name||'#'+id);
+  toast('Đã duyệt địa điểm 🎉','ok');renderAdmin();
+}
+function openRej(id){document.getElementById('rej-id').value=id;document.getElementById('rej-reason').value='';openM('mreject');}
+function doReject(){
+  const id=parseInt(document.getElementById('rej-id').value);
+  const reason=document.getElementById('rej-reason').value.trim();
+  if(!reason){toast('Nhập lý do từ chối','err');return;}
+  const posts=DB.get('posts')||[];
+  const idx=posts.findIndex(p=>p.id===id);
+  if(idx>-1){posts[idx].status='rejected';posts[idx].rejR=reason;}
+  DB.set('posts',posts);addLog('❌ Từ chối địa điểm',posts[idx]?.name||'#'+id);
+  toast('Đã từ chối bài đăng','inf');closeM('mreject');renderAdmin();
+}
+function hideP(id){
+  const posts=DB.get('posts')||[];
+  const idx=posts.findIndex(p=>p.id===id);
+  if(idx>-1)posts[idx].status='hidden';
+  DB.set('posts',posts);addLog('🚫 Ẩn địa điểm',posts[idx]?.name||'#'+id);
+  toast('Đã ẩn địa điểm','inf');renderAPosts();
+}
+function adEditP(id){
+  const p=(DB.get('posts')||[]).find(x=>x.id===id);if(!p)return;
+  document.getElementById('mpost-title').textContent='✏️ Admin sửa địa điểm';
+  document.getElementById('f-eid').value=id;
+  document.getElementById('f-name').value=p.name;
+  document.getElementById('f-addr').value=p.addr;
+  document.getElementById('f-desc').value=p.desc;
+  document.getElementById('f-price').value=p.price||'';
+  document.getElementById('f-phone').value=p.phone||'';
+  document.getElementById('f-hours').value=p.hours||'';
+  document.getElementById('f-dress').value=p.dress||'';
+  document.getElementById('f-tags').value=p.tags||'';
+  document.getElementById('f-deal').value=p.deal||'';
+  document.getElementById('f-cat').value=p.cat;
+  document.getElementById('f-icon').value=p.icon||'🎵';
+  document.getElementById('f-hot').value=p.hot?'1':'0';
+  const btn=document.getElementById('mpost-btn');
+  btn.textContent='💾 Lưu';
+  btn.onclick=()=>{
+    const posts=DB.get('posts')||[];
+    const idx=posts.findIndex(x=>x.id===id);
+    if(idx>-1)posts[idx]={...posts[idx],
+      name:document.getElementById('f-name').value.trim(),
+      addr:document.getElementById('f-addr').value.trim(),
+      desc:document.getElementById('f-desc').value.trim(),
+      phone:document.getElementById('f-phone').value.trim(),
+      cat:document.getElementById('f-cat').value,
+      price:parseFloat(document.getElementById('f-price').value)||0,
+      hours:document.getElementById('f-hours').value.trim(),
+      dress:document.getElementById('f-dress').value.trim(),
+      tags:document.getElementById('f-tags').value.trim(),
+      deal:document.getElementById('f-deal').value.trim(),
+      icon:document.getElementById('f-icon').value,
+      hot:parseInt(document.getElementById('f-hot').value)||0,
+    };
+    DB.set('posts',posts);addLog('✏️ Sửa địa điểm',posts[idx]?.name||'');
+    toast('Đã cập nhật địa điểm','ok');closeM('mpost');renderAdmin();
+  };
+  openM('mpost');
+}
+function adDelP(id){
+  const p=(DB.get('posts')||[]).find(x=>x.id===id);
+  conf('Xoá địa điểm',`Xoá "${p?.name}"? Không thể hoàn tác.`,()=>{
+    DB.set('posts',(DB.get('posts')||[]).filter(x=>x.id!==id));
+    addLog('🗑️ Xoá địa điểm',p?.name||'#'+id);toast('Đã xoá','inf');renderAdmin();
+  });
+}
+function toggleLock(id){
+  const users=DB.get('users')||[];
+  const idx=users.findIndex(u=>u.id===id);
+  if(idx>-1){
+    users[idx].status=users[idx].status==='active'?'locked':'active';
+    addLog(users[idx].status==='locked'?'🔒 Khoá CTV':'🔓 Mở khoá CTV',users[idx].name);
+    toast(`${users[idx].status==='locked'?'Đã khoá':'Đã mở khoá'}: ${users[idx].name}`,'inf');
+    DB.set('users',users);renderAdmin();
+  }
+}
+function delUser(id){
+  const u=(DB.get('users')||[]).find(x=>x.id===id);
+  conf('Xoá tài khoản CTV',`Xoá CTV "${u?.name}"? Toàn bộ bài đăng cũng bị xoá.`,()=>{
+    DB.set('users',(DB.get('users')||[]).filter(x=>x.id!==id));
+    DB.set('posts',(DB.get('posts')||[]).filter(p=>p.uid!==id));
+    addLog('🗑️ Xoá CTV',u?.name||'#'+id);toast('Đã xoá tài khoản','inf');renderAdmin();
+  });
+}
 
-    function closeModal(modalId) {
-        document.getElementById(modalId).style.display = 'none';
-    }
+// ═══ EXPORT ═══
+function exportCSV(){
+  const posts=DB.get('posts')||[];const users=DB.get('users')||[];
+  const rows=[['ID','Tên địa điểm','Loại hình','CTV','SĐT CTV','Địa chỉ','Giá vào cửa','Ưu đãi','Trạng thái','Ngày đăng']];
+  posts.forEach(p=>{
+    const ctv=users.find(u=>u.id===p.uid)||{name:'?',phone:'?'};
+    rows.push([p.id,p.name,p.cat,ctv.name,p.phone,p.addr,p.price,p.deal||'',p.status,fmt(p.created)]);
+  });
+  const csv=rows.map(r=>r.map(v=>`"${v}"`).join(',')).join('\n');
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(new Blob(['\uFEFF'+csv],{type:'text/csv;charset=utf-8'}));
+  a.download='nightvibe-export.csv';a.click();
+  addLog('📤 Xuất CSV','nightvibe-export.csv');toast('Đã xuất CSV','ok');
+}
+function doBackup(){
+  const data={users:DB.get('users'),posts:DB.get('posts'),logs:DB.get('logs'),exported:new Date().toISOString()};
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(new Blob([JSON.stringify(data,null,2)],{type:'application/json'}));
+  a.download='nightvibe-backup.json';a.click();
+  addLog('💾 Backup DB','nightvibe-backup.json');toast('Backup thành công!','ok');
+}
 
-            function register(e) {
-            e.preventDefault();
-            const name = document.getElementById('registerName').value;
-            const email = document.getElementById('registerEmail').value;
-            const password = document.getElementById('registerPassword').value;
-            const phone = document.getElementById('registerPhone').value;
-            
-            if (users.find(u => u.email === email)) {
-                alert('Email đã tồn tại!');
-                return;
-            }
-            
-            const newUser = {id: Date.now(), name, email, password, phone};
-            users.push(newUser);
-            localStorage.setItem('users', JSON.stringify(users));
-            
-            // Gửi thông báo đăng ký về email admin
-            notifyNewUser(newUser);
-            
-            alert('Đăng ký thành công!');
-            closeModal('registerModal');
-            openModal('loginModal');
-        }
-
-        function notifyNewUser(user) {
-            const subject = `[BookingVN] Người dùng mới đăng ký`;
-            const body = `
-Thông tin người dùng mới:
-
-Họ tên: ${user.name}
-Email: ${user.email}
-SĐT: ${user.phone}
-Thời gian: ${new Date().toLocaleString('vi-VN')}
-            `.trim();
-            
-            const mailtoLink = `mailto:nghjakzz133@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-            
-            // Mở email trong tab mới (không làm gián đoạn user)
-            setTimeout(() => {
-                window.open(mailtoLink, '_blank');
-            }, 500);
-        }
-
-
-    function login(e) {
-        e.preventDefault();
-        const email = document.getElementById('loginEmail').value;
-        const password = document.getElementById('loginPassword').value;
-        
-        const user = users.find(u => u.email === email && u.password === password);
-        
-        if (user) {
-            currentUser = user;
-            localStorage.setItem('currentUser', JSON.stringify(user));
-            alert('Đăng nhập thành công!');
-            closeModal('loginModal');
-            checkLogin();
-        } else {
-            alert('Email hoặc mật khẩu không đúng!');
-        }
-    }
-
-    function logout() {
-        currentUser = null;
-        localStorage.removeItem('currentUser');
-        document.getElementById('authButtons').style.display = 'block';
-        document.getElementById('userInfo').style.display = 'none';
-        alert('Đã đăng xuất!');
-    }
-
-                    let selectedVenue = null;
-
-        function bookVenue(venueId) {
-            selectedVenue = venues.find(v => v.id === venueId);
-            document.getElementById('bookingTitle').textContent = `Đặt chỗ tại ${selectedVenue.name}`;
-            
-            // Xóa auto-fill (vì không có đăng nhập)
-            document.getElementById('bookingName').value = '';
-            document.getElementById('bookingEmail').value = '';
-            document.getElementById('bookingPhone').value = '';
-            
-            openModal('bookingModal');
-        }
-
-
-        function submitBooking(e) {
-            e.preventDefault();
-            
-            const bookingData = {
-                venue: selectedVenue.name,
-                venueAddress: selectedVenue.address,
-                name: document.getElementById('bookingName').value,
-                email: document.getElementById('bookingEmail').value,
-                phone: document.getElementById('bookingPhone').value,
-                date: document.getElementById('bookingDate').value,
-                time: document.getElementById('bookingTime').value,
-                guests: document.getElementById('bookingGuests').value,
-                note: document.getElementById('bookingNote').value
-            };
-            
-            // Send to EmailJS or your backend
-            sendBookingEmail(bookingData);
-        }
-
-        function sendBookingEmail(data) {
-            // Create mailto link (works on mobile)
-            const subject = `[BookingVN] Đặt chỗ tại ${data.venue}`;
-            const body = `
-Thông tin đặt chỗ:
-
-Địa điểm: ${data.venue}
-Địa chỉ: ${data.venueAddress}
-
-Khách hàng: ${data.name}
-Email: ${data.email}
-SĐT: ${data.phone}
-
-Ngày: ${data.date}
-Giờ: ${data.time}
-Số người: ${data.guests}
-
-Ghi chú: ${data.note || 'Không có'}
-            `.trim();
-            
-            const mailtoLink = `mailto:nghjakzz133@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-            
-            window.location.href = mailtoLink;
-            
-            closeModal('bookingModal');
-            alert('Đang mở ứng dụng email của bạn...');
-            
-            // Reset form
-            document.querySelector('#bookingModal form').reset();
-        }
-
-
-    // Đóng modal khi click bên ngoài
-    window.onclick = function(event) {
-        if (event.target.classList.contains('modal')) {
-            event.target.style.display = 'none';
-        }
-    }
-
-    init();
+// ═══ INIT ═══
+DB.init();getSess();updNav();renderHome();
+if(ME){ME.role==='admin'?(showPage('admin'),renderAdmin()):(showPage('ctv'),renderCTV());}
 </script>
-```
 
 </body>
 </html>
